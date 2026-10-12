@@ -1,0 +1,10 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512">
+  <rect width="512" height="512" fill="#121110"/>
+  <!-- A doorway drawn on a wall: wireframe, no fill. Kept inside the maskable safe zone. -->
+  <g transform="translate(-20 0)" fill="none" stroke="#e8e4dc" stroke-width="10" stroke-linejoin="miter">
+    <rect x="186" y="146" width="140" height="230"/>
+    <path d="M186 146 L226 116 L366 116 L366 346 L326 376"/>
+    <path d="M326 146 L366 116"/>
+  </g>
+  <path transform="translate(-20 0)" d="M206 376 L306 376" stroke="#ff5a3c" stroke-width="14"/>
+</svg>

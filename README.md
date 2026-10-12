@@ -11,6 +11,8 @@ portfolio is written in anamorphic shards that read from a single point.
 
 Play: https://wraithyy.github.io/the-unbuilt/
 
+Installable as an app (PWA): on Android Chrome use "Install app", on iOS Safari Share → "Add to Home Screen". It launches full-screen and plays offline after the first load.
+
 ## Run
 
 ```sh
