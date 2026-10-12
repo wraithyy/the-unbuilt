@@ -1,0 +1,172 @@
+.ov {
+  position: fixed;
+  inset: 0;
+  z-index: 30;
+  display: flex;
+  flex-direction: column;
+  background: var(--paper);
+  color: var(--ink);
+  touch-action: pan-y;
+  animation: rise 0.25s var(--ease) both;
+}
+
+.ov-bar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.75rem;
+  padding: calc(env(safe-area-inset-top) + 8px) calc(env(safe-area-inset-right) + var(--gutter)) 8px
+    calc(env(safe-area-inset-left) + var(--gutter));
+  border-bottom: 1px solid var(--hairline);
+  background: var(--paper);
+}
+
+.ov-nav {
+  display: flex;
+  gap: 0.25rem 1rem;
+  overflow-x: auto;
+  scrollbar-width: none;
+  min-width: 0;
+}
+
+.ov-link {
+  min-height: 44px;
+  padding: 0 0.25rem;
+  border: 0;
+  background: none;
+  white-space: nowrap;
+  font-family: var(--font-mono);
+  font-size: var(--text-label);
+  letter-spacing: 0.04em;
+  transition: color 0.25s var(--ease);
+}
+
+.ov-link:hover {
+  color: var(--accent);
+}
+
+.ov-tools,
+.ov-lang {
+  border: 0;
+  margin: 0;
+  padding: 0;
+  min-width: 0;
+  display: flex;
+  gap: 0.5rem;
+  flex-shrink: 0;
+}
+
+.ov-lang .btn-ghost[aria-pressed="true"] {
+  background: var(--ink);
+  color: var(--paper);
+  border-color: var(--ink);
+}
+
+.ov-close {
+  width: 44px;
+  height: 44px;
+  font-size: 1rem;
+}
+
+.ov-scroll {
+  flex: 1;
+  overflow-y: auto;
+  overflow-x: hidden;
+  touch-action: pan-y;
+  overscroll-behavior: contain;
+  padding: 0 calc(env(safe-area-inset-right) + var(--gutter)) env(safe-area-inset-bottom)
+    calc(env(safe-area-inset-left) + var(--gutter));
+}
+
+.ov-main {
+  max-width: 48rem;
+  margin: 0 auto;
+  line-height: 1.6;
+  overflow-wrap: anywhere;
+}
+
+.ov-main p {
+  margin: 0;
+}
+
+.ov-sec {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  padding: clamp(2.5rem, 8vw, 5rem) 0;
+  border-bottom: 1px solid var(--hairline);
+  scroll-margin-top: 0.5rem;
+}
+
+.ov-sec:last-child {
+  border-bottom: 0;
+}
+
+.ov-lede {
+  font-family: var(--font-display);
+  font-size: clamp(1.4rem, 3.5vw, 2rem);
+  line-height: 1.25;
+}
+
+.ov-h3 {
+  font-family: var(--font-display);
+  font-weight: 400;
+  font-size: 1.35rem;
+  margin: 0;
+}
+
+.ov-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+
+.ov-job {
+  display: grid;
+  grid-template-columns: 8rem 1fr;
+  gap: 1rem;
+}
+
+.ov-stack {
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 1.25rem;
+}
+
+.ov-stack dd {
+  margin: 0.25rem 0 0;
+}
+
+.ov-contact {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+.ov-contact li {
+  display: grid;
+  grid-template-columns: 6rem 1fr;
+  align-items: center;
+  min-height: 44px;
+  border-bottom: 1px solid var(--hairline);
+}
+
+.ov a {
+  text-underline-offset: 0.2em;
+  transition: color 0.25s var(--ease);
+}
+
+.ov a:hover {
+  color: var(--accent);
+}
+
+@media (max-width: 30rem) {
+  .ov-job {
+    grid-template-columns: 1fr;
+    gap: 0.25rem;
+  }
+}

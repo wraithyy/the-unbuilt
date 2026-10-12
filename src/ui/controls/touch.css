@@ -1,0 +1,65 @@
+.touch {
+  position: absolute;
+  inset: 0;
+  touch-action: none;
+  user-select: none;
+  -webkit-user-select: none;
+}
+
+.touch-layer {
+  position: absolute;
+  inset: 0;
+  touch-action: none;
+}
+
+.stick {
+  position: absolute;
+  translate: -50% -50%;
+  border: 1px solid color-mix(in srgb, var(--ink) 35%, transparent);
+  border-radius: 50%;
+  pointer-events: none;
+  display: grid;
+  place-items: center;
+}
+
+.stick-knob {
+  width: 44px;
+  height: 44px;
+  border-radius: 50%;
+  background: color-mix(in srgb, var(--ink) 70%, transparent);
+}
+
+.touch-buttons {
+  position: absolute;
+  right: calc(env(safe-area-inset-right) + 20px);
+  bottom: calc(env(safe-area-inset-bottom) + 20px);
+  display: flex;
+  flex-direction: column-reverse;
+  align-items: flex-end;
+  gap: 14px;
+}
+
+.touch-btn {
+  width: 84px;
+  height: 84px;
+  border-radius: 50%;
+  border: 1px solid var(--ink);
+  background: color-mix(in srgb, var(--paper) 70%, transparent);
+  color: var(--ink);
+  font-family: var(--font-mono);
+  font-size: 0.8rem;
+  letter-spacing: 0.06em;
+  touch-action: none;
+}
+
+.touch-btn[data-active] {
+  background: var(--accent);
+  border-color: var(--accent);
+  color: var(--paper);
+}
+
+.touch-btn-small {
+  width: 60px;
+  height: 60px;
+  font-size: 0.7rem;
+}

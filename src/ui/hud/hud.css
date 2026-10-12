@@ -1,0 +1,102 @@
+.hud {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+}
+
+.hud button,
+.hud .touch,
+.hud .touch * {
+  pointer-events: auto;
+}
+
+.reticle {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  width: 6px;
+  height: 6px;
+  translate: -50% -50%;
+  border-radius: 50%;
+  background: var(--ink);
+  opacity: 0.6;
+  transition:
+    width 0.25s var(--ease),
+    height 0.25s var(--ease),
+    background-color 0.25s var(--ease);
+}
+
+.reticle[data-state="grab"],
+.reticle[data-state="drop"] {
+  width: 18px;
+  height: 18px;
+  background: transparent;
+  border: 2px solid var(--accent);
+  opacity: 1;
+}
+
+.reticle[data-state="blocked"] {
+  width: 18px;
+  height: 2px;
+  border-radius: 0;
+  background: var(--accent);
+  opacity: 1;
+}
+
+.prompt {
+  position: absolute;
+  left: 50%;
+  top: calc(50% + 22px);
+  translate: -50% 0;
+  color: var(--ink);
+  background: color-mix(in srgb, var(--paper) 75%, transparent);
+  padding: 2px 8px;
+}
+
+.click-to-look {
+  position: absolute;
+  color: var(--ink);
+  background: color-mix(in srgb, var(--paper) 80%, transparent);
+  padding: 2px 8px;
+  left: 50%;
+  top: calc(50% + 48px);
+  translate: -50% 0;
+}
+
+.hud-top {
+  position: absolute;
+  top: calc(env(safe-area-inset-top) + 12px);
+  left: calc(env(safe-area-inset-left) + 16px);
+  right: calc(env(safe-area-inset-right) + 16px);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.hud-actions {
+  display: flex;
+  gap: 8px;
+}
+
+.subtitles {
+  position: absolute;
+  left: 50%;
+  bottom: calc(env(safe-area-inset-bottom) + 24px);
+  translate: -50% 0;
+  text-align: center;
+  max-width: min(90vw, 40rem);
+}
+
+.subtitles p {
+  margin: 4px 0;
+  color: var(--ink);
+  background: color-mix(in srgb, var(--paper) 80%, transparent);
+  padding: 2px 8px;
+}
+
+.fade {
+  position: absolute;
+  inset: 0;
+  background: var(--paper);
+  transition: opacity 0.1s linear;
+}
