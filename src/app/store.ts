@@ -19,6 +19,8 @@ export interface Settings {
   subtitles: boolean
   volume: number
   theme: 'light' | 'dark'
+  /** Close-eyes control toggles instead of being held (motor accessibility). */
+  eyesToggle: boolean
 }
 
 const SETTINGS_KEY = 'unbuilt.settings'
@@ -39,6 +41,7 @@ function defaultSettings(): Settings {
     subtitles: true,
     volume: 0.7,
     theme: dark ? 'dark' : 'light',
+    eyesToggle: false,
   }
 }
 
@@ -65,6 +68,7 @@ export function loadSettings(): Settings {
       subtitles: bool(r.subtitles, base.subtitles),
       volume: num(r.volume, 0, 1, base.volume),
       theme: pick(r.theme, ['light', 'dark'], base.theme),
+      eyesToggle: bool(r.eyesToggle, base.eyesToggle),
     }
     return out
   } catch {
@@ -90,6 +94,15 @@ interface UiState {
   touch: boolean
   pointerLocked: boolean
   fade: number
+  eyesClosed: boolean
+  /** Pulse the eye control until the player has discovered it. */
+  eyeHint: boolean
+  /** Portfolio sections the player has read in the world. */
+  discovered: string[]
+  /** Section just discovered (toast). */
+  discovery: string | null
+  /** Section the overlay should open at. */
+  overlaySection: string | null
   setScreen: (s: Screen) => void
   setOverlay: (open: boolean) => void
   setSettingsOpen: (open: boolean) => void
@@ -115,6 +128,11 @@ export const useUi = create<UiState>((set, get) => ({
   touch: false,
   pointerLocked: false,
   fade: 0,
+  eyesClosed: false,
+  eyeHint: false,
+  discovered: [],
+  discovery: null,
+  overlaySection: null,
   setScreen: (screen) => set({ screen }),
   setOverlay: (overlay) => set({ overlay }),
   setSettingsOpen: (settingsOpen) => set({ settingsOpen }),

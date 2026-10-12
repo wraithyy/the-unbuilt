@@ -11,6 +11,17 @@ import { useUi } from './store'
 let game: GameT | null = null
 const listeners = new Set<(e: Parameters<Parameters<GameT['on']>[0]>[0]) => void>()
 
+let attract: GameT | null = null
+
+/** A throwaway world for the menu backdrop; never saved. */
+export function getAttractGame() {
+  if (!attract) {
+    attract = new Game(areas)
+    attract.warp([0, 0.85, -18], 0)
+  }
+  return attract
+}
+
 export function getGame() {
   return game
 }
@@ -49,6 +60,16 @@ export function startGame(fresh: boolean) {
       document.exitPointerLock?.()
       useUi.getState().setScreen('ending')
     }
+    if (e.name === 'custom' && e.id.startsWith('read:')) {
+      const section = e.id.slice(5)
+      const ui = useUi.getState()
+      ui.set({ discovered: [...new Set([...ui.discovered, section])], discovery: section })
+      setTimeout(() => {
+        if (useUi.getState().discovery === section) useUi.getState().set({ discovery: null })
+      }, 7000)
+    }
+    if (e.name === 'eyes') useUi.getState().set({ eyesClosed: e.closed, eyeHint: false })
+    if (e.name === 'flag' && e.flag === 'arrival:door') useUi.getState().set({ eyeHint: false })
     if (e.name === 'gravity' && e.instant) {
       useUi.getState().set({ fade: 1 })
       setTimeout(() => useUi.getState().set({ fade: 0 }), 200)
@@ -63,6 +84,15 @@ export function startGame(fresh: boolean) {
     progress: SIGILS.filter((s) => g.flags.all.has(s)).length,
     hasSave: true,
   })
+  const discovered = [...g.flags.persistent]
+    .filter((f) => f.startsWith('read:mon-'))
+    .map((f) => f.slice('read:mon-'.length))
+  useUi.getState().set({ eyesClosed: false, eyeHint: false, discovered, discovery: null })
+  // Nudge toward the eye control if the first room has the player stuck for a while.
+  setTimeout(() => {
+    if (getGame() === g && g.area === 'arrival' && !g.flags.all.has('arrival:door'))
+      useUi.getState().set({ eyeHint: true })
+  }, 25_000)
   useUi.getState().setScreen('playing')
   if (new URLSearchParams(location.search).has('debug')) {
     Object.assign(window, { __unbuilt: g })

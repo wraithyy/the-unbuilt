@@ -66,6 +66,36 @@ test.describe('desktop', () => {
     expect(restored.flags).toContain('arrival:done')
   })
 
+  test('closing your eyes lets you walk forward through the drawn door', async ({ page }) => {
+    await fresh(page)
+    await page.getByRole('button', { name: 'Enter' }).click()
+    await page.waitForTimeout(400)
+    await setYaw(page, 0)
+    await page.keyboard.down('KeyQ')
+    await expect(page.getByRole('status').filter({ hasText: 'eyes closed' })).toBeVisible()
+    await page.keyboard.down('KeyW')
+    await expect
+      .poll(async () => (await state(page)).pos[2], { timeout: 15_000 })
+      .toBeLessThan(-2.2)
+    await page.keyboard.up('KeyW')
+    await page.keyboard.up('KeyQ')
+  })
+
+  test('reading a monument records it in the portfolio', async ({ page }) => {
+    await fresh(page)
+    await page.getByRole('button', { name: 'Enter' }).click()
+    await page.waitForTimeout(400)
+    await page.evaluate(() => {
+      const g = (window as unknown as { __unbuilt: import('../../src/gameplay/game').Game })
+        .__unbuilt
+      g.warp([0, 0.85, -14.6], 0)
+      g.player.pitch = Math.atan2(15.5 - 1.47, -14.6 + 31)
+    })
+    await page.getByRole('button', { name: /Portfolio — about/ }).click()
+    const dialog = page.getByRole('dialog')
+    await expect(dialog.getByText('found in the world')).toBeVisible()
+  })
+
   test('arrow keys look around without a mouse', async ({ page }) => {
     await fresh(page)
     await page.getByRole('button', { name: 'Enter' }).click()

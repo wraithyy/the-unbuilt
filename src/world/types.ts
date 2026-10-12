@@ -117,7 +117,37 @@ export interface CaptionDef {
   when?: Cond
 }
 
-export type EntityDef = CubeDef | PlateDef | DoorDef | GhostDef | AlignDef | CaptionDef
+/**
+ * Anamorphic text: a panel of text broken into shards scattered along the rays from a
+ * vantage eye point. From the vantage the shards line up into the readable panel; reading
+ * it sets `read:<id>` (persisted) and the shards then assemble for good.
+ */
+export interface AnamorphDef {
+  type: 'anamorph'
+  id: string
+  /** Portfolio section this monument records (opens the overlay there). */
+  section: 'about' | 'capabilities' | 'stack' | 'experience' | 'contact'
+  /** Small figure label, a title, then body lines — keys into strings. */
+  label: string
+  title: string
+  lines: string[]
+  /** Eye position of the vantage (feet are 1.47 m lower). */
+  vantage: Vec3
+  /** Center of the readable panel. */
+  center: Vec3
+  /** Panel height in meters. */
+  height: number
+  when?: Cond
+}
+
+export type EntityDef =
+  | CubeDef
+  | PlateDef
+  | DoorDef
+  | GhostDef
+  | AlignDef
+  | CaptionDef
+  | AnamorphDef
 
 export interface AreaDef {
   id: string

@@ -8,7 +8,7 @@ import { PauseMenu } from '../ui/menus/PauseMenu'
 import { SettingsPanel } from '../ui/menus/SettingsPanel'
 import { Overlay } from '../ui/Overlay'
 import { GameView } from './GameView'
-import { getGame, hasSave } from './session'
+import { getAttractGame, getGame, hasSave } from './session'
 import { useUi } from './store'
 import './app.css'
 
@@ -74,6 +74,7 @@ export function App() {
   return (
     <div className="app">
       {inGame && <GameView game={game} />}
+      {screen === 'menu' && <GameView game={getAttractGame()} attract />}
       {screen === 'playing' && !overlay && <Hud />}
       {screen === 'menu' && <MainMenu />}
       {screen === 'paused' && !overlay && !settingsOpen && <PauseMenu />}

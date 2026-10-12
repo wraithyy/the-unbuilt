@@ -16,6 +16,8 @@ export type CueName =
   | 'solve'
   | 'secret'
   | 'respawn'
+  | 'eyesClose'
+  | 'eyesOpen'
 
 export type SubKey = 'ghost' | 'door' | 'solve' | 'secret' | 'gravity' | 'respawn' | 'plate'
 
@@ -61,6 +63,8 @@ export function cueFor(e: GameEvent): Cue | null {
       if (e.id === 'solve') return { cue: 'solve', sub: 'solve' }
       if (e.id === 'secret') return { cue: 'secret', sub: 'secret' }
       return null
+    case 'eyes':
+      return { cue: e.closed ? 'eyesClose' : 'eyesOpen' }
     case 'flag':
     case 'align':
     case 'area':

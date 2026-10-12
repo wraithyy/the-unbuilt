@@ -79,6 +79,14 @@ export function SettingsPanel() {
           <label className="check">
             <input
               type="checkbox"
+              checked={s.eyesToggle}
+              onChange={(e) => update({ eyesToggle: e.target.checked })}
+            />
+            <span>{t('eyesToggle', lang)}</span>
+          </label>
+          <label className="check">
+            <input
+              type="checkbox"
               checked={s.subtitles}
               onChange={(e) => update({ subtitles: e.target.checked })}
             />

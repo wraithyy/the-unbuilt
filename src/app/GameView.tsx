@@ -23,12 +23,24 @@ const QUALITY: Record<Quality, { dpr: number; shadows: boolean; shadowMap: numbe
     high: { dpr: 2, shadows: true, shadowMap: 2048, aa: true },
   }
 
-function Driver({ game }: { game: Game }) {
+const ATTRACT_INPUT = { x: 0, y: 0, jump: false, interact: false }
+
+function Driver({ game, attract }: { game: Game; attract: boolean }) {
   const camera = useThree((s) => s.camera)
   const acc = useRef(0)
-  useFrame((_, delta) => {
+  useFrame(({ clock }, delta) => {
     const ui = useUi.getState()
     const cam = camera as PerspectiveCamera // R3F default camera is perspective.
+    if (attract) {
+      // Menu backdrop: the Atrium, looking up into the void, slowly turning.
+      const t = clock.elapsedTime
+      game.player.yaw = 0.35 * Math.sin(t * 0.07)
+      game.player.pitch = 0.42 + 0.08 * Math.sin(t * 0.05)
+      game.step(Math.min(delta, 0.05), ATTRACT_INPUT, cam)
+      cameraPose(game.player, eyeTmp, cam.quaternion)
+      cam.position.copy(eyeTmp)
+      return
+    }
     if (ui.screen === 'playing' && !ui.overlay) {
       const s = ui.settings
       const dt = Math.min(delta, 0.1)
@@ -45,7 +57,11 @@ function Driver({ game }: { game: Game }) {
       let jump = input.jump
       let stepped = false
       while (acc.current >= FIXED_DT) {
-        game.step(FIXED_DT, { x: input.moveX, y: input.moveY, jump, interact }, cam)
+        game.step(
+          FIXED_DT,
+          { x: input.moveX, y: input.moveY, jump, interact, eyesClosed: input.eyes },
+          cam,
+        )
         interact = false
         jump = false
         stepped = true
@@ -126,14 +142,18 @@ function AdaptiveDpr({ max }: { max: number }) {
   return null
 }
 
-export function GameView({ game }: { game: Game }) {
+export function GameView({ game, attract = false }: { game: Game; attract?: boolean }) {
   const quality = useUi((s) => s.settings.quality)
   const q = QUALITY[quality]
   const [canvasEl, setCanvasEl] = useState<HTMLCanvasElement | null>(null)
 
   useEffect(() => {
     if (!canvasEl) return
-    const detach = attachKeyboardMouse(canvasEl, () => useUi.getState().screen === 'playing')
+    const detach = attachKeyboardMouse(
+      canvasEl,
+      () => useUi.getState().screen === 'playing',
+      () => useUi.getState().settings.eyesToggle,
+    )
     const onLock = () => {
       const locked = document.pointerLockElement === canvasEl
       const ui = useUi.getState()
@@ -173,7 +193,7 @@ export function GameView({ game }: { game: Game }) {
         }
       }}
     >
-      <Driver game={game} />
+      <Driver game={game} attract={attract} />
       <Lights game={game} shadows={q.shadows} mapSize={q.shadowMap} />
       <World game={game} shadows={q.shadows} />
       <AdaptiveDpr max={q.dpr} />

@@ -13,6 +13,7 @@ import {
 import type {
   Action,
   AlignDef,
+  AnamorphDef,
   AreaDef,
   BoxDef,
   CaptionDef,
@@ -46,6 +47,7 @@ export type GameEvent =
   | { name: 'align'; id: string; aligned: boolean }
   | { name: 'area'; id: string }
   | { name: 'ending' }
+  | { name: 'eyes'; closed: boolean }
   | { name: 'custom'; id: string }
 
 export interface StaticBox {
@@ -107,6 +109,15 @@ export interface AlignState {
   solid: boolean
 }
 
+export interface AnamorphState {
+  def: AnamorphDef
+  area: string
+  visible: boolean
+  read: boolean
+  /** 0 = scattered, 1 = assembled (eases up after reading). */
+  assembled: number
+}
+
 export interface TriggerState {
   def: TriggerDef
   area: string
@@ -133,6 +144,9 @@ export interface SaveSnapshot {
 export type Prompt = 'grab' | 'drop' | 'blocked' | null
 
 export const FIXED_DT = 1 / 60
+/** How close to the vantage eye, and how directly at the panel, reading requires. */
+export const ANAMORPH_RADIUS = 1.1
+export const ANAMORPH_COS = Math.cos((12 * Math.PI) / 180)
 
 const toBox = (b: { min: Vec3; max: Vec3 }) =>
   new Box3(new Vector3(...b.min), new Vector3(...b.max))
@@ -159,6 +173,7 @@ export class Game {
   readonly aligns: AlignState[] = []
   readonly triggers: TriggerState[] = []
   readonly captions: CaptionState[] = []
+  readonly anamorphs: AnamorphState[] = []
   /** Rebuilt every step: everything currently solid. */
   readonly solids: Box3[] = []
   readonly playerBox = new Box3()
@@ -170,6 +185,8 @@ export class Game {
   heldInfo: Held = { scalable: false, ratio: 1, size: 1 }
   heldPlacement: Placement = { t: 1, size: 1, fits: false }
   prompt: Prompt = null
+  /** With eyes closed nothing is observed: the world shows its unwatched state. */
+  eyesClosed = false
   time = 0
   private lostFor = 0
   private listeners: ((e: GameEvent) => void)[] = []
@@ -257,6 +274,9 @@ export class Game {
         case 'caption':
           this.captions.push({ def: e, area: a.id, visible: true })
           break
+        case 'anamorph':
+          this.anamorphs.push({ def: e, area: a.id, visible: true, read: false, assembled: 0 })
+          break
       }
     }
   }
@@ -306,10 +326,14 @@ export class Game {
   /** Look is applied per render frame for responsiveness; movement in fixed steps. */
   step(
     dt: number,
-    move: { x: number; y: number; jump: boolean; interact: boolean },
+    move: { x: number; y: number; jump: boolean; interact: boolean; eyesClosed?: boolean },
     camera: PerspectiveCamera,
   ) {
     this.time += dt
+    if (!!move.eyesClosed !== this.eyesClosed) {
+      this.eyesClosed = !!move.eyesClosed
+      this.emit({ name: 'eyes', closed: this.eyesClosed })
+    }
     this.refreshActive()
     this.rebuildSolids(null)
 
@@ -323,6 +347,7 @@ export class Game {
     this.stepDoors(dt)
     this.stepGhosts(dt)
     this.stepAligns()
+    this.stepAnamorphs(dt)
     this.stepHeld(move.interact)
     this.stepArea(dt)
   }
@@ -353,6 +378,13 @@ export class Game {
       c.alive = alive
     }
     for (const c of this.captions) c.visible = evalCond(c.def.when, f)
+    for (const a of this.anamorphs) {
+      a.visible = evalCond(a.def.when, f)
+      if (!a.read && f.has(`read:${a.def.id}`)) {
+        a.read = true
+        a.assembled = 1
+      }
+    }
   }
 
   /** Collects solids; `skip` cube is left out (and the held cube always is). */
@@ -372,6 +404,29 @@ export class Game {
     for (const c of this.cubes) {
       if (c === ignore || !c.alive || c.held) continue
       if (overlaps(c.box.min, c.box.max, occupied)) return true
+    }
+    return false
+  }
+
+  /**
+   * Something rests on the box (gravity-aware): it must not vanish from under it.
+   * Touching it from the side does not count, so leaning on a wall never pins it.
+   */
+  private isSupporting(box: Box3) {
+    occupied.copy(box)
+    const ga = gravityAxis(this.player.gravity)
+    const upSign = -Math.sign(gravityVector(this.player.gravity, v1).getComponent(ga))
+    if (upSign > 0) occupied.max.setComponent(ga, occupied.max.getComponent(ga) + 0.06)
+    else occupied.min.setComponent(ga, occupied.min.getComponent(ga) - 0.06)
+    return this.overlapsOccupant(occupied)
+  }
+
+  /** Strict overlap with the player or a resting cube: appearing here would trap it. */
+  private overlapsOccupant(box: Box3) {
+    if (overlaps(this.playerBox.min, this.playerBox.max, box)) return true
+    for (const c of this.cubes) {
+      if (!c.alive || c.held) continue
+      if (overlaps(c.box.min, c.box.max, box)) return true
     }
     return false
   }
@@ -476,7 +531,7 @@ export class Game {
   private stepCreep(c: CubeState, dt: number) {
     const creep = c.def.creep
     if (!creep) return
-    stepObserved(c.obs, inView(this.frustum, c.box), dt, false)
+    stepObserved(c.obs, this.sees(c.box), dt, false)
     if (c.obs.seen) return
     const target = creep.path[c.creepIndex]
     if (!target) {
@@ -544,11 +599,12 @@ export class Game {
     for (const g of this.ghosts) {
       g.since += dt
       const gate = evalCond(g.def.when, this.flags.all)
-      stepObserved(g.obs, inView(this.frustum, g.box), dt, this.isOccupied(g.box))
+      const pinned = g.present ? this.isSupporting(g.box) : this.overlapsOccupant(g.box)
+      stepObserved(g.obs, this.sees(g.box), dt, pinned)
       const want = gate && (g.def.present === 'seen' ? g.obs.seen : !g.obs.seen)
       if (want === g.present) continue
       // Appearing inside something is never allowed; disappearing gated by `when` is.
-      if (want && this.isOccupied(g.box)) continue
+      if (want ? this.overlapsOccupant(g.box) : this.isSupporting(g.box)) continue
       g.present = want
       g.since = 0
       this.emit({ name: 'ghost', id: g.def.id, present: want })
@@ -564,12 +620,37 @@ export class Game {
       v2.set(...v.lookAt)
         .sub(eye)
         .normalize()
-      const looking = dir.dot(v2) >= Math.cos((v.coneDeg * Math.PI) / 180)
+      const looking = !this.eyesClosed && dir.dot(v2) >= Math.cos((v.coneDeg * Math.PI) / 180)
       const solid = (near && looking) || (a.solid && this.isOccupied(a.box))
       if (solid === a.solid) continue
       a.solid = solid
       this.setFlag(a.flag, solid)
       this.emit({ name: 'align', id: a.def.id, aligned: solid })
+    }
+  }
+
+  private sees(box: Box3) {
+    return !this.eyesClosed && inView(this.frustum, box)
+  }
+
+  private stepAnamorphs(dt: number) {
+    eyePos(this.player, eye)
+    viewDir(this.player, dir)
+    for (const a of this.anamorphs) {
+      if (!a.visible) continue
+      if (a.read) {
+        a.assembled = Math.min(1, a.assembled + dt / 3)
+        continue
+      }
+      if (this.eyesClosed) continue
+      const near = eye.distanceTo(v1.set(...a.def.vantage)) <= ANAMORPH_RADIUS
+      v2.set(...a.def.center)
+        .sub(eye)
+        .normalize()
+      if (!near || dir.dot(v2) < ANAMORPH_COS) continue
+      a.read = true
+      this.setFlag(`read:${a.def.id}`, true, true)
+      this.emit({ name: 'custom', id: `read:${a.def.section}` })
     }
   }
 

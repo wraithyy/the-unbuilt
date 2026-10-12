@@ -14,7 +14,7 @@ opt-in from the pause menu (gentle → near-solution).
 
 | | Rule | Taught in |
 |---|---|---|
-| O — Observation | some geometry exists only while watched / only while unwatched; some things move only when unwatched | Arrival |
+| O — Observation | some geometry exists only while watched / only while unwatched; some things move only when unwatched. Closing your eyes (Q / eye button) makes nothing watched and shows the world as a light blueprint — you never have to walk backwards | Arrival |
 | L — Topology | corridors repeat; inside can be larger than outside; direction of travel matters | Loop, Convergence |
 | P — Perspective | a held cube keeps its apparent size; placed far it grows, near it shrinks; fragments align from one viewpoint | Perspective |
 | G — Gravity | red strips make their surface the floor; dropped things fall your way | Inversion |
@@ -54,3 +54,31 @@ content (capabilities, stack, work history).
 
 Draw calls < 150 per view, JS < 600 kB gzip, no post-processing, one shadow light
 (off on Low), adaptive DPR.
+
+## Visual direction
+
+- **Built where you look.** Static architecture is filled only near the player and toward
+  the centre of vision; with distance and at the edge of sight it dissolves cell by cell
+  (red seam) into its wireframe. Interactive objects never dissolve.
+- **The void.** Paper-white architecture floats in near-black space: an inverted Atrium
+  turns overhead, Penrose stair rings circle the hub, a Penrose triangle closes only from
+  the Atrium entrance, dust drifts upward.
+- **Eyes closed.** All fill disappears; every edge becomes a light line; sight shrinks to a
+  few metres. You see the world as it is when nobody watches.
+
+## Portfolio in the world
+
+Anamorphic monuments: each portfolio chapter is a panel cut into shards scattered along
+the rays from one vantage (a red floor square). From there the shards line up into
+readable text; reading it records the chapter (overlay marks it "found in the world",
+a toast links straight to it) and the shards then assemble permanently.
+
+| Chapter | Where | Appears |
+|---|---|---|
+| About | Atrium entrance | always |
+| Capabilities | Atrium, north-west | after Loop |
+| Stack | Atrium, north-east | after Perspective |
+| Experience | Atrium, looking back south | after Inversion |
+| Contact | The Unbuilt (ending room) | at the end |
+
+The conventional overlay keeps every chapter reachable at any time.

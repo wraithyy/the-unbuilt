@@ -15,13 +15,18 @@ function recompute() {
   input.keyLookY = axis('ArrowDown', 'ArrowUp')
 }
 
-export function attachKeyboardMouse(target: HTMLElement, isPlaying: () => boolean) {
+export function attachKeyboardMouse(
+  target: HTMLElement,
+  isPlaying: () => boolean,
+  eyesToggle: () => boolean,
+) {
   const down = (e: KeyboardEvent) => {
     if (!isPlaying() || e.metaKey || e.ctrlKey || e.altKey) return
     if (e.code === 'Space') {
       e.preventDefault()
       if (!e.repeat) input.jump = true
     }
+    if (e.code === 'KeyQ' && !e.repeat) input.eyes = eyesToggle() ? !input.eyes : true
     if ((e.code === 'KeyE' || e.code === 'KeyF' || e.code === 'Enter') && !e.repeat)
       input.interact = true
     if (e.code.startsWith('Arrow')) e.preventDefault()
@@ -29,6 +34,7 @@ export function attachKeyboardMouse(target: HTMLElement, isPlaying: () => boolea
     recompute()
   }
   const up = (e: KeyboardEvent) => {
+    if (e.code === 'KeyQ' && !eyesToggle()) input.eyes = false
     held.delete(e.code)
     recompute()
   }
@@ -44,6 +50,7 @@ export function attachKeyboardMouse(target: HTMLElement, isPlaying: () => boolea
   }
   const blur = () => {
     held.clear()
+    if (!eyesToggle()) input.eyes = false
     recompute()
   }
   window.addEventListener('keydown', down)

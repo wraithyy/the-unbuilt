@@ -32,9 +32,17 @@ export function camera() {
   return c
 }
 
-export const idle = { x: 0, y: 0, jump: false, interact: false }
+export interface Move {
+  x: number
+  y: number
+  jump: boolean
+  interact: boolean
+  eyesClosed?: boolean
+}
 
-export function run(g: Game, seconds: number, move = idle, cam = camera()) {
+export const idle: Move = { x: 0, y: 0, jump: false, interact: false }
+
+export function run(g: Game, seconds: number, move: Move = idle, cam = camera()) {
   const n = Math.round(seconds / FIXED_DT)
   for (let i = 0; i < n; i++) g.step(FIXED_DT, move, cam)
 }

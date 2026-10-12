@@ -58,12 +58,17 @@ doorway (or any route you design that ends there).
 - `ghost` — observation-dependent box. `present: 'seen'` exists only while inside the
   camera frustum; `'unseen'` only while outside. Changes need 0.15 s of stable
   observation and **never happen while the player or a cube occupies the volume** (no
-  traps). Absent `unseen` ghosts are drawn as a dashed wireframe (a learnable tell).
+  traps); leaning on a ghost from the side does not pin it, only standing on it does.
+  Absent `unseen` ghosts are drawn as a dashed wireframe (a learnable tell). With the
+  player's eyes closed (`Game.eyesClosed`) nothing counts as seen.
   Frustum only — walls do not occlude observation; design sightlines accordingly.
 - `align` — forced-perspective bridge. `fragments` (static boxes) are always drawn;
   the solid `box` exists while the player's eye is within `vantage.radius` of
   `vantage.pos` and looks within `coneDeg` of `vantage.lookAt`, and stays while
   occupied. Sets `flag` (default `"<areaId>.<id>"`) while solid.
+- `anamorph` — portfolio monument (see `src/world/areas/monuments.ts`): text panel cut into
+  shards along the rays from `vantage`; reading it from there sets `read:<id>` (persisted),
+  emits `custom` `read:<section>`, then the shards assemble.
 - `caption` — in-world text plane (faces +Z; `rotY` rotates it). `text` is a key into
   your `strings`. `style: 'fig'` (mono, default, 0.16 m) or `'display'` (serif).
 

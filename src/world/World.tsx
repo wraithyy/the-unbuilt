@@ -25,6 +25,9 @@ import {
 import { useUi } from '../app/store'
 import type { Game } from '../gameplay/game'
 import { worldText } from '../i18n'
+import { Anamorphs } from './Anamorph'
+import { buildUniforms, patchFill, patchLine } from './buildShader'
+import { Decor } from './Decor'
 import type { Box, CaptionDef, Material } from './types'
 
 // Renders a Game. Static geometry is built once (instanced per material, edges merged
@@ -36,7 +39,7 @@ export const PALETTE = {
   ink: '#1a1815',
   accent: '#c93a20',
   glass: '#dedad2',
-  fog: '#faf8f4',
+  fog: '#0d0c0b',
   hairline: '#1a1815',
 } as const
 
@@ -50,6 +53,17 @@ const materials: Record<Material, MeshLambertMaterial> = {
   accent: new MeshLambertMaterial({ color: PALETTE.accent }),
   glass: new MeshLambertMaterial({ color: PALETTE.glass, transparent: true, opacity: 0.35 }),
 }
+// Static architecture uses the build/unbuild variants; dynamic entities stay solid so
+// interactive things always read as real.
+const staticMaterials = Object.fromEntries(
+  Object.entries(materials).map(([k, m]) => [k, patchFill(m.clone())]),
+) as Record<Material, MeshLambertMaterial>
+const staticEdge = patchLine(
+  new LineBasicMaterial({ color: PALETTE.hairline, transparent: true, opacity: 0.55 }),
+)
+const staticEdgeOnInk = patchLine(
+  new LineBasicMaterial({ color: '#8a847b', transparent: true, opacity: 0.6 }),
+)
 const edgeMat = new LineBasicMaterial({ color: PALETTE.hairline, transparent: true, opacity: 0.5 })
 const edgeOnInk = new LineBasicMaterial({ color: PALETTE.paper, transparent: true, opacity: 0.25 })
 const accentEdge = new LineBasicMaterial({ color: PALETTE.accent })
@@ -97,7 +111,7 @@ function StaticWorld({ game, shadows }: { game: Game; shadows: boolean }) {
       byMat.set(k, [...(byMat.get(k) ?? []), s.def])
     }
     const meshes = [...byMat].map(([mat, boxes]) => {
-      const im = new InstancedMesh(unitBox, materials[mat], boxes.length)
+      const im = new InstancedMesh(unitBox, staticMaterials[mat], boxes.length)
       boxes.forEach((b, i) => {
         boxCenterSize(b)
         im.setMatrixAt(i, m4.compose(center, q0, size))
@@ -109,8 +123,8 @@ function StaticWorld({ game, shadows }: { game: Game; shadows: boolean }) {
     const dark = always.filter((s) => s.def.mat === 'ink').map((s) => s.def)
     return {
       meshes,
-      lines: new LineSegments(edgeGeometry(light), edgeMat),
-      inkLines: new LineSegments(edgeGeometry(dark), edgeOnInk),
+      lines: new LineSegments(edgeGeometry(light), staticEdge),
+      inkLines: new LineSegments(edgeGeometry(dark), staticEdgeOnInk),
     }
   }, [game])
 
@@ -394,21 +408,66 @@ function Captions({ game }: { game: Game }) {
   return (
     <>
       {game.captions.map((c, i) => (
-        <Caption key={c.def.id + i} def={c.def} visible={() => c.visible} />
+        <Caption key={c.def.id + i} def={c.def} visible={() => c.visible && !game.eyesClosed} />
       ))}
     </>
   )
 }
 
+const lookDir = new Vector3()
+
+const fillMaterials = [...Object.values(materials), ...Object.values(staticMaterials)]
+const INK = new Color(PALETTE.ink)
+const PAPER_LINE = new Color('#e8e4dc')
+let wasBlind = false
+
+/** Eyes closed: hide every fill, turn every line into the light blueprint. */
+function applyBlind(blind: boolean) {
+  if (blind === wasBlind) return
+  wasBlind = blind
+  for (const m of fillMaterials) m.visible = !blind
+  edgeMat.color.copy(blind ? PAPER_LINE : INK)
+  edgeMat.opacity = blind ? 0.9 : 0.5
+  dashed.color.copy(blind ? PAPER_LINE : INK)
+  edgeOnInk.opacity = blind ? 0.9 : 0.25
+  buildUniforms.uBlind.value = blind ? 1 : 0
+}
+
+/** Feeds the build shader the camera every frame. */
+function BuildDriver({ game }: { game: Game }) {
+  useEffect(() => () => applyBlind(false), [])
+  useFrame(({ camera, clock, scene }) => {
+    applyBlind(game.eyesClosed)
+    // Blind, you only sense the blueprint close around you.
+    if (scene.fog && 'far' in scene.fog) {
+      scene.fog.near = game.eyesClosed ? 3 : 12
+      scene.fog.far = game.eyesClosed ? 24 : 80
+    }
+    buildUniforms.uEye.value.copy(camera.position)
+    camera.getWorldDirection(lookDir)
+    buildUniforms.uDir.value.copy(lookDir)
+    buildUniforms.uTime.value = clock.elapsedTime
+  })
+  useEffect(() => {
+    if (new URLSearchParams(location.search).has('debug'))
+      Object.assign(window, { __build: buildUniforms })
+  }, [])
+  return null
+}
+
 export function World({ game, shadows }: { game: Game; shadows: boolean }) {
+  const fontsReady = useFontsReady()
   const fog = useMemo(() => new Color(PALETTE.fog), [])
   return (
     <>
       <color attach="background" args={[fog]} />
-      <fog attach="fog" args={[fog, 14, 70]} />
+      <fog attach="fog" args={[fog, 12, 80]} />
+      <BuildDriver game={game} />
+      <Decor game={game} />
       <StaticWorld game={game} shadows={shadows} />
       <DynamicWorld game={game} shadows={shadows} />
       <Captions game={game} />
+      <Anamorphs game={game} fontsReady={fontsReady} />
     </>
   )
 }

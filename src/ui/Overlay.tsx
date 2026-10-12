@@ -1,4 +1,4 @@
-import { type ReactNode, useRef } from 'react'
+import { type ReactNode, useEffect, useRef } from 'react'
 import { useUi } from '../app/store'
 import { t } from '../i18n'
 import { type Lang, links, portfolio } from '../portfolio/data'
@@ -38,10 +38,18 @@ function Ext({ href, children }: { href: string; children: ReactNode }) {
 }
 
 function Section({ n, title, children }: { n: number; title: string; children: ReactNode }) {
+  const found = useUi((s) => s.discovered.includes(IDS[n] ?? ''))
+  const lang = useUi((s) => s.settings.lang)
   return (
     <section id={`ov-${IDS[n]}`} className="ov-sec" aria-labelledby={`ov-h-${IDS[n]}`}>
       <p className="label" id={`ov-h-${IDS[n]}`}>
         {String(n + 1).padStart(2, '0')} — {title}
+        {found && (
+          <span className="ov-found">
+            {' · '}
+            {lang === 'cs' ? 'nalezeno ve světě' : 'found in the world'}
+          </span>
+        )}
       </p>
       {children}
     </section>
@@ -56,6 +64,13 @@ export function Overlay() {
   const closeBtn = useRef<HTMLButtonElement>(null)
 
   const trap = useDialog(root, closeBtn)
+
+  useEffect(() => {
+    const section = useUi.getState().overlaySection
+    if (!section) return
+    document.getElementById(`ov-${section}`)?.scrollIntoView({ block: 'start' })
+    useUi.getState().set({ overlaySection: null })
+  }, [])
 
   const go = (id: string) => {
     const el = document.getElementById(`ov-${id}`)

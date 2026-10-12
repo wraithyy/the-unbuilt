@@ -10,6 +10,8 @@ export interface InputState {
   lookY: number
   jump: boolean
   interact: boolean
+  /** Eyes closed (held or toggled, see settings). */
+  eyes: boolean
   /** Held keyboard look axes in [-1, 1] (arrow keys), integrated per frame. */
   keyLookX: number
   keyLookY: number
@@ -26,6 +28,7 @@ export const input: InputState = {
   keyLookY: 0,
   jump: false,
   interact: false,
+  eyes: false,
   lookScale: 1,
 }
 
@@ -42,5 +45,6 @@ export function resetInput() {
   input.moveY = 0
   input.keyLookX = 0
   input.keyLookY = 0
+  input.eyes = false
   consumeEdges()
 }

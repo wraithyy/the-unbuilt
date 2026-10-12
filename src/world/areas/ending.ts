@@ -1,6 +1,9 @@
 import { portfolio } from '../../portfolio/data'
 import { b, box, hollow } from '../build'
 import type { AreaDef, EntityDef } from '../types'
+import { monument, monumentStrings } from './monuments'
+
+const MON = monumentStrings(['contact'])
 
 // The Unbuilt — the room behind the oculus. Its colonnade is only built while nobody is
 // looking (wireframe when watched, filled when you turn away: the site's "fig. 01 —
@@ -30,6 +33,7 @@ export const ending: AreaDef = {
   ],
   entities: [
     ...columns,
+    monument('contact', { vantage: [3.5, 1.47, -270], center: [-5, 5.4, -288], height: 4.5 }),
     {
       type: 'caption',
       id: 'name',
@@ -51,12 +55,14 @@ export const ending: AreaDef = {
   ],
   strings: {
     en: {
+      ...MON.en,
       'end.name': portfolio.en.name,
       'end.role': portfolio.en.role,
       'end.fig': 'fig. ∞ — unbuilt',
       'end.cols': 'fig. 08 — built while nobody was looking',
     },
     cs: {
+      ...MON.cs,
       'end.name': portfolio.cs.name,
       'end.role': portfolio.cs.role,
       'end.fig': 'obr. ∞ — nepostaveno',

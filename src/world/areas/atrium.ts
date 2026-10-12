@@ -1,6 +1,9 @@
 import { SIGILS } from '../../gameplay/progression'
 import { b, box, frame, hollow } from '../build'
 import type { AreaDef, BoxDef } from '../types'
+import { monument, monumentStrings } from './monuments'
+
+const MON = monumentStrings(['about', 'capabilities', 'stack', 'experience'])
 
 // The Atrium — hub. Open to the sky, colonnaded, with a sealed ink core in the middle.
 // Doorways: west → Loop, east → Perspective, north → Inversion. The core opens when all
@@ -61,6 +64,26 @@ export const atrium: AreaDef = {
     ),
   ],
   entities: [
+    // Portfolio monuments: shards that read only from the red square on the floor.
+    monument('about', { vantage: [0, 1.47, -14.6], center: [0, 15.5, -31], height: 8 }),
+    monument('capabilities', {
+      vantage: [-8, 1.47, -21],
+      center: [-8.5, 15, -48],
+      height: 5.5,
+      when: 'sigil:loop',
+    }),
+    monument('stack', {
+      vantage: [8, 1.47, -21],
+      center: [8.5, 15, -48],
+      height: 5.5,
+      when: 'sigil:perspective',
+    }),
+    monument('experience', {
+      vantage: [0, 1.47, -46],
+      center: [0, 15.5, -14],
+      height: 6,
+      when: 'sigil:inversion',
+    }),
     {
       type: 'door',
       id: 'core',
@@ -84,6 +107,7 @@ export const atrium: AreaDef = {
   hints: ['atrium.h1', 'atrium.h2'],
   strings: {
     en: {
+      ...MON.en,
       'atrium.core': 'fig. 05 — sealed until the three agree',
       'atrium.west': 'fig. 02 — loop',
       'atrium.east': 'fig. 03 — perspective',
@@ -93,6 +117,7 @@ export const atrium: AreaDef = {
       'atrium.h2': 'The marks above the core door show what you already carry.',
     },
     cs: {
+      ...MON.cs,
       'atrium.core': 'obr. 05 — zapečetěno, dokud se ty tři neshodnou',
       'atrium.west': 'obr. 02 — smyčka',
       'atrium.east': 'obr. 03 — perspektiva',

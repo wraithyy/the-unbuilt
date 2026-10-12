@@ -4,8 +4,12 @@
 
 A surreal first-person puzzle game for desktop and mobile browsers. It is also Josef
 Kvapil's portfolio ([jkvapil.cz](https://jkvapil.cz)). Rules are discovered, not explained:
-a door is a wall only while you look at it, a corridor repeats itself, what you hold keeps
-its apparent size, and any red surface can become the floor.
+a door is a wall only while someone watches it — close your eyes and the world shows its
+unwatched blueprint; a corridor repeats itself, what you hold keeps its apparent size, and
+any red surface can become the floor. The architecture is only built where you look; the
+portfolio is written in anamorphic shards that read from a single point.
+
+Play: https://wraithyy.github.io/the-unbuilt/
 
 ## Run
 
@@ -31,6 +35,7 @@ screenshots, per-area render stats); run them from the repo root against `pnpm d
 | Move | WASD | left thumb (floating joystick) |
 | Look | mouse (click canvas to lock) or arrow keys | drag with right thumb |
 | Take / place | E, F, Enter or click | context button |
+| Close your eyes | Q (hold; toggle in settings) | hold the eye button |
 | Jump | Space | Jump button |
 | Pause | Esc | II button |
 

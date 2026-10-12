@@ -243,3 +243,41 @@ describe('integration fixes', () => {
     expect(g.prompt).toBe('drop')
   })
 })
+
+describe('closing your eyes', () => {
+  it('a watched-only wall is gone while the eyes are closed, so you can walk through facing it', () => {
+    const g = new Game([
+      room('a', {
+        entities: [
+          { type: 'ghost', id: 'w', box: box([-10, 0, -4], [10, 6, -3.6]), present: 'seen' },
+        ],
+      }),
+    ])
+    run(g, 0.5)
+    run(g, 1.5, walk(0, 1))
+    expect(g.player.pos.z).toBeGreaterThan(-3.6)
+    const closed = { x: 0, y: 1, jump: false, interact: false, eyesClosed: true }
+    run(g, 3, closed)
+    expect(g.player.pos.z).toBeLessThan(-5)
+  })
+
+  it('creeping things move while the eyes are closed', () => {
+    const g = new Game([
+      room('a', {
+        entities: [
+          {
+            type: 'cube',
+            id: 'c',
+            pos: [0, 0.3, -3],
+            size: 0.6,
+            creep: { path: [[3, 0.3, -3]], speed: 2 },
+          },
+        ],
+      }),
+    ])
+    run(g, 1)
+    expect(g.cubes[0].pos.x).toBeCloseTo(0)
+    run(g, 2, { x: 0, y: 0, jump: false, interact: false, eyesClosed: true })
+    expect(g.cubes[0].pos.x).toBeCloseTo(3)
+  })
+})

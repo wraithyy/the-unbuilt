@@ -20,6 +20,7 @@ const events: GameEvent[] = [
   { name: 'align', id: 'a', aligned: true },
   { name: 'area', id: 'atrium' },
   { name: 'ending' },
+  { name: 'eyes', closed: true },
   { name: 'custom', id: 'solve' },
   { name: 'custom', id: 'secret' },
   { name: 'custom', id: 'atrium' },

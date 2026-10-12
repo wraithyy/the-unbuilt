@@ -136,6 +136,8 @@ const CUES: Record<CueName, (t: number) => void> = {
       tone(f, t + i * 0.11, 1.2, 0.035, { attack: 0.02 })
   },
   respawn: (t) => tone(440, t, 1.1, 0.05, { to: 110, attack: 0.05 }),
+  eyesClose: (t) => noise(t, 0.35, 0.04, 260, 'lowpass', 0.08),
+  eyesOpen: (t) => noise(t, 0.25, 0.03, 900, 'lowpass', 0.04),
 }
 
 // Drone: [freqs, gain]. Arrival is near-silent, unknown areas are silent.

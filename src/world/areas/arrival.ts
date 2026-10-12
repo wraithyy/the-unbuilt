@@ -109,7 +109,8 @@ export const arrival: AreaDef = {
       'arrival.h1':
         'Something on the north wall changes. Watch the frame from the corner of your eye.',
       'arrival.h2': 'The doorway is only a wall while you are looking at it.',
-      'arrival.h3': 'Walk through it backwards. In the next room, look away and let things move.',
+      'arrival.h3':
+        'Close your eyes (Q, or hold the eye) and walk through. In the next room, let things move while you are not looking.',
     },
     cs: {
       'arrival.fig1': 'obr. 01 — dveře, nakreslené',
@@ -117,7 +118,8 @@ export const arrival: AreaDef = {
       'arrival.title': 'The Unbuilt',
       'arrival.h1': 'Na severní stěně se něco mění. Sleduj rám koutkem oka.',
       'arrival.h2': 'Ze dveří je zeď, jen dokud se na ně díváš.',
-      'arrival.h3': 'Projdi jimi pozpátku. V další místnosti se odvrať a nech věci pohnout.',
+      'arrival.h3':
+        'Zavři oči (Q nebo podrž oko) a projdi. V další místnosti nech věci pohnout, když se nedíváš.',
     },
   },
 }

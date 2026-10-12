@@ -222,7 +222,7 @@ export const inversion: AreaDef = {
       'inversion.h2':
         'The red square on the ceiling wants the cube. What you drop falls the way you do.',
       'inversion.h3':
-        'The ceiling doorway lets you through only while you are not watching it. Walk in backwards.',
+        'The ceiling doorway lets you through only while nobody watches it. Close your eyes and walk in.',
     },
     cs: {
       'inversion.fig1': 'obr. 04 — každý povrch je pro někoho podlaha',
@@ -232,7 +232,8 @@ export const inversion: AreaDef = {
       'inversion.h1': 'Červené plochy chtějí být podlahou. Vejdi do jedné.',
       'inversion.h2':
         'Červený čtverec na stropě chce kostku. Co pustíš, padá stejným směrem jako ty.',
-      'inversion.h3': 'Průchod u stropu tě pustí, jen dokud se na něj nedíváš. Jdi dozadu.',
+      'inversion.h3':
+        'Průchod u stropu tě pustí, jen když se na něj nikdo nedívá. Zavři oči a projdi.',
     },
   },
 }

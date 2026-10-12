@@ -18,15 +18,15 @@
 
 | Area | Draw calls | Triangles |
 |---|---|---|
-| arrival | 103 | 7.4k |
-| atrium | 76 | 7.3k |
-| loop | 66 | 7.3k |
-| perspective | 37 | 7.1k |
-| inversion | 60 | 7.2k |
-| convergence | 50 | 7.1k |
-| ending | 29 | 6.5k |
+| arrival | 112 | 13.8k |
+| atrium | 84 | 13.7k |
+| loop | 74 | 13.7k |
+| perspective | 45 | 13.6k |
+| inversion | 68 | 13.7k |
+| convergence | 59 | 13.5k |
+| ending | 38 | 13.0k |
 
-Bundle: JS 1.22 MB raw / 340 kB gzip, CSS 10.7 kB gzip, fonts ~70 kB woff2.
+Bundle: JS 1.24 MB raw / 346 kB gzip, CSS 10.7 kB gzip, fonts ~70 kB woff2.
 Reproduce: `pnpm dev`, then `node scripts/perf.mjs http://localhost:5173/?debug`.
 
 ## Not verified
@@ -48,6 +48,8 @@ Setup: open the deployed URL, landscape, sound on (iOS: silent switch off).
    Lift the thumb outside the screen edge: movement stops (no stuck input).
 4. Right thumb drag looks around while the left thumb walks (two fingers at once).
 5. Use / Jump buttons respond while walking; Use label changes to take / place / no room.
+   Hold the eye button with the right thumb while walking with the left: blueprint view,
+   releasing restores the world.
 6. Pull-to-refresh, pinch zoom, text selection, long-press callouts never trigger in play.
 7. Notch / home indicator: HUD buttons and touch buttons not under safe areas.
 8. Switch apps / lock screen mid-game: game pauses; resume continues; audio resumes.
