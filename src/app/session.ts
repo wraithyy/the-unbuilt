@@ -44,6 +44,16 @@ export function hasSave() {
 
 export function startGame(fresh: boolean) {
   const ui = useUi.getState()
+  // Browser chrome eats a third of a phone screen; this click is the user gesture the
+  // Fullscreen API needs. iPhone Safari has no element fullscreen: there only the home
+  // screen install helps. Desktop keeps the window, Esc is already pause.
+  if (ui.touch && !document.fullscreenElement) {
+    document.documentElement
+      .requestFullscreen?.({ navigationUI: 'hide' })
+      // Locking only works in fullscreen; the rotate hint covers browsers that refuse.
+      .then(() => screen.orientation.lock('landscape'))
+      .catch(() => {})
+  }
   if (fresh) clearSave()
   const loaded = loadSave()
   if (loaded.status === 'corrupt') ui.setNotice(t('corruptSave', ui.settings.lang))

@@ -1,4 +1,4 @@
-import { useEffect, useSyncExternalStore } from 'react'
+import { lazy, Suspense, useEffect, useSyncExternalStore } from 'react'
 import { initAudio } from '../engine/audio'
 import { t } from '../i18n'
 import { Hud } from '../ui/hud/Hud'
@@ -7,10 +7,12 @@ import { MainMenu } from '../ui/menus/MainMenu'
 import { PauseMenu } from '../ui/menus/PauseMenu'
 import { SettingsPanel } from '../ui/menus/SettingsPanel'
 import { Overlay } from '../ui/Overlay'
-import { GameView } from './GameView'
 import { getAttractGame, getGame, hasSave } from './session'
 import { useUi } from './store'
 import './app.css'
+
+// The renderer (three + R3F) is most of the bundle; the menu is plain DOM and shows first.
+const GameView = lazy(() => import('./GameView').then((m) => ({ default: m.GameView })))
 
 const portraitQuery = '(orientation: portrait)'
 const subscribePortrait = (cb: () => void) => {
@@ -73,8 +75,10 @@ export function App() {
 
   return (
     <div className="app">
-      {inGame && <GameView game={game} />}
-      {screen === 'menu' && <GameView game={getAttractGame()} attract />}
+      <Suspense fallback={null}>
+        {inGame && <GameView game={game} />}
+        {screen === 'menu' && <GameView game={getAttractGame()} attract />}
+      </Suspense>
       {screen === 'playing' && !overlay && <Hud />}
       {screen === 'menu' && <MainMenu />}
       {screen === 'paused' && !overlay && !settingsOpen && <PauseMenu />}
