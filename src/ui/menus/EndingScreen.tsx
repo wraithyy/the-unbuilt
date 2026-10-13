@@ -17,6 +17,9 @@ export function EndingScreen() {
           <button type="button" className="btn" data-primary onClick={() => set({ overlay: true })}>
             {t('portfolio', lang)}
           </button>
+          <a className="btn" href={links.site.href} target="_blank" rel="noreferrer">
+            {links.site.label} ↗
+          </a>
           <a className="btn" href={links.github.href} target="_blank" rel="noreferrer">
             GitHub {links.github.label} ↗
           </a>

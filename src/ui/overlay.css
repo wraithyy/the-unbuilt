@@ -174,3 +174,10 @@
 .ov-found {
   color: var(--accent);
 }
+
+/* Narrow screens keep the header for navigation; the site link sits under the name. */
+@media (max-width: 520px) {
+  .ov-site {
+    display: none;
+  }
+}

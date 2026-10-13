@@ -192,3 +192,8 @@
   font-size: 0.85rem;
   line-height: 1.4;
 }
+
+.menu-foot a {
+  color: inherit;
+  text-underline-offset: 3px;
+}

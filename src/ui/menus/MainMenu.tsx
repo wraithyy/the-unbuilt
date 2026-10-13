@@ -2,6 +2,7 @@ import { useEffect, useRef, useState } from 'react'
 import { startGame } from '../../app/session'
 import { useUi } from '../../app/store'
 import { t } from '../../i18n'
+import { links } from '../../portfolio/data'
 import { LangThemeSwitch } from './LangThemeSwitch'
 
 // iPhone Safari has no Fullscreen API; only the home-screen app hides its bars.
@@ -64,7 +65,12 @@ export function MainMenu() {
         </p>
         <LangThemeSwitch />
       </div>
-      <footer className="menu-foot label">Josef Kvapil · jkvapil.cz</footer>
+      <footer className="menu-foot label">
+        Josef Kvapil ·{' '}
+        <a href={links.site.href} target="_blank" rel="noreferrer">
+          {links.site.label} ↗
+        </a>
+      </footer>
     </main>
   )
 }

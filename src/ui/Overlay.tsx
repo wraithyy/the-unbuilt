@@ -114,6 +114,9 @@ export function Overlay() {
               </button>
             ))}
           </fieldset>
+          <a className="btn-ghost ov-site" href={links.site.href} target="_blank" rel="noreferrer">
+            {links.site.label} ↗
+          </a>
           <button
             ref={closeBtn}
             type="button"
@@ -133,6 +136,9 @@ export function Overlay() {
               {p.name}
             </h1>
             <p className="label">{p.role}</p>
+            <p>
+              <Ext href={links.site.href}>{links.site.label}</Ext>
+            </p>
             <p className="ov-lede">{p.lede}</p>
             <p className="label">{p.summary}</p>
             <h2 className="title">{p.aboutTitle}</h2>
