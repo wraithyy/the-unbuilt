@@ -69,7 +69,7 @@ doorway (or any route you design that ends there).
 - `anamorph` — portfolio monument (see `src/world/areas/monuments.ts`): text panel cut into
   shards along the rays from `vantage`; reading it from there sets `read:<id>` (persisted),
   emits `custom` `read:<section>`, then the shards assemble.
-- `caption` — in-world text plane (faces +Z; `rotY` rotates it). `text` is a key into
+- `caption` — in-world text plane (faces +Z; `rotY` rotates it, `roll` spins it in plane, e.g. π for upside-down readers). `text` is a key into
   your `strings`. `style: 'fig'` (mono, default, 0.16 m) or `'display'` (serif).
 
 ## Triggers (`triggers: TriggerDef[]`)

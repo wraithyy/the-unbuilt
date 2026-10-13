@@ -1,11 +1,13 @@
 import { useUi } from '../../app/store'
 import { t } from '../../i18n'
+import { MuteButton } from '../MuteButton'
 
 export function LangThemeSwitch() {
   const settings = useUi((s) => s.settings)
   const update = useUi((s) => s.updateSettings)
   return (
     <div className="switches">
+      <MuteButton />
       <button
         type="button"
         className="btn-ghost"

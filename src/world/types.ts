@@ -111,6 +111,8 @@ export interface CaptionDef {
   text: string
   pos: Vec3
   rotY?: number
+  /** In-plane rotation, applied before rotY: Math.PI for readers standing upside-down. */
+  roll?: number
   /** Text height in meters. */
   size?: number
   style?: 'fig' | 'display'

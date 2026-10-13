@@ -52,8 +52,16 @@ export function App() {
         useUi.getState().setScreen('paused')
     }
     const onKey = (e: KeyboardEvent) => {
-      if (e.key !== 'Escape') return
       const s = useUi.getState()
+      if (
+        (e.key === 'm' || e.key === 'M') &&
+        !e.repeat &&
+        !(e.target instanceof HTMLInputElement)
+      ) {
+        s.updateSettings({ muted: !s.settings.muted })
+        return
+      }
+      if (e.key !== 'Escape') return
       if (s.overlay) s.set({ overlay: false })
       else if (s.settingsOpen) s.set({ settingsOpen: false })
       else if (s.screen === 'paused') s.set({ screen: 'playing' })

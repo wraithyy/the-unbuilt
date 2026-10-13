@@ -183,3 +183,12 @@
     margin-top: 1rem;
   }
 }
+
+.menu-install {
+  margin: 0;
+  max-width: 34ch;
+  padding: 10px 12px;
+  border: 1px solid var(--accent);
+  font-size: 0.85rem;
+  line-height: 1.4;
+}

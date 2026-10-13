@@ -4,6 +4,15 @@ import { useUi } from '../../app/store'
 import { t } from '../../i18n'
 import { LangThemeSwitch } from './LangThemeSwitch'
 
+// iPhone Safari has no Fullscreen API; only the home-screen app hides its bars.
+// iPadOS reports itself as a Mac, hence the touch-point check.
+const iosBrowser =
+  typeof navigator !== 'undefined' &&
+  (/iP(hone|od|ad)/.test(navigator.userAgent) ||
+    (navigator.userAgent.includes('Macintosh') && navigator.maxTouchPoints > 1)) &&
+  !('standalone' in navigator && navigator.standalone === true) &&
+  !matchMedia('(display-mode: standalone)').matches
+
 export function MainMenu() {
   const lang = useUi((s) => s.settings.lang)
   const hasSave = useUi((s) => s.hasSave)
@@ -49,6 +58,7 @@ export function MainMenu() {
             </button>
           </div>
         )}
+        {iosBrowser && <p className="menu-install">{t('installIos', lang)}</p>}
         <p className="label menu-controls">
           {touch ? t('controlsTouch', lang) : t('controlsDesktop', lang)}
         </p>

@@ -36,8 +36,10 @@ content (capabilities, stack, work history).
 
 1. **Arrival** — a door drawn on a wall is a wall only while seen: walk through it backwards.
    A cube crosses the next room to a plate only while nobody watches. (O)
-2. **Loop** — a periodic corridor; each lap flips parity (vaults open on odd laps). Take the
-   cube, place it on a plate hidden behind a watched-only wall to anchor the corridor.
+2. **Loop** — a periodic corridor; each lap flips parity (glass vaults open on odd laps; the
+   wall caption alternates "you have been here" / "...before" so the repeat is readable).
+   Take the cube, close your eyes at the red-framed niche (the Arrival motif) and place it
+   on the plate behind the watched-only wall to anchor the corridor.
    Secret: three backward laps. (L + O + E)
 3. **Perspective** — grow a cube by placing it far away to press a strip; size one to climb
    a ledge; stand on the vantage square so floating fragments become a bridge. Secret: a

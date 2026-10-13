@@ -18,6 +18,9 @@ export interface Settings {
   joystickSize: number
   subtitles: boolean
   volume: number
+  /** Score level relative to volume. */
+  music: number
+  muted: boolean
   theme: 'light' | 'dark'
   /** Close-eyes control toggles instead of being held (motor accessibility). */
   eyesToggle: boolean
@@ -40,6 +43,8 @@ function defaultSettings(): Settings {
     joystickSize: 1,
     subtitles: true,
     volume: 0.7,
+    music: 0.6,
+    muted: false,
     theme: dark ? 'dark' : 'light',
     eyesToggle: false,
   }
@@ -67,6 +72,8 @@ export function loadSettings(): Settings {
       joystickSize: num(r.joystickSize, 0.7, 1.5, base.joystickSize),
       subtitles: bool(r.subtitles, base.subtitles),
       volume: num(r.volume, 0, 1, base.volume),
+      music: num(r.music, 0, 1, base.music),
+      muted: bool(r.muted, base.muted),
       theme: pick(r.theme, ['light', 'dark'], base.theme),
       eyesToggle: bool(r.eyesToggle, base.eyesToggle),
     }

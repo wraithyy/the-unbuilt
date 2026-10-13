@@ -67,6 +67,8 @@ const staticEdgeOnInk = patchLine(
 const edgeMat = new LineBasicMaterial({ color: PALETTE.hairline, transparent: true, opacity: 0.5 })
 const edgeOnInk = new LineBasicMaterial({ color: PALETTE.paper, transparent: true, opacity: 0.25 })
 const accentEdge = new LineBasicMaterial({ color: PALETTE.accent })
+// Glass doors would vanish against paper without a drawn outline.
+const glassEdge = new LineBasicMaterial({ color: PALETTE.ink })
 const dashed = new LineDashedMaterial({
   color: PALETTE.ink,
   dashSize: 0.12,
@@ -280,7 +282,7 @@ function DynamicWorld({ game, shadows }: { game: Game; shadows: boolean }) {
           mat={d.def.mat ?? 'ink'}
           refFn={set(`d${i}`)}
           shadows={shadows}
-          edges={edgeOnInk}
+          edges={d.def.mat === 'glass' ? glassEdge : edgeOnInk}
         />
       ))}
       {game.ghosts.map((gh, i) => (
@@ -375,7 +377,7 @@ function Caption({ def, visible }: { def: CaptionDef; visible: () => boolean }) 
     <mesh
       ref={ref}
       position={[...def.pos]}
-      rotation={[0, def.rotY ?? 0, 0]}
+      rotation={[0, def.rotY ?? 0, def.roll ?? 0]}
       scale={[h * 1.3 * data.aspect, h * 1.3, 1]}
       material={mat}
     >

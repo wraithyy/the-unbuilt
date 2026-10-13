@@ -27,6 +27,10 @@ const ui = {
     joystick: 'Joystick size',
     subtitles: 'Subtitles for sounds',
     volume: 'Volume',
+    music: 'Music',
+    mute: 'Sound off',
+    installIos:
+      'Plays best as an app: tap Share, then “Add to Home Screen”. It opens full-screen from there.',
     language: 'Language',
     theme: 'Interface theme',
     light: 'light',
@@ -38,7 +42,7 @@ const ui = {
     jump: 'Jump',
     pause: 'Pause',
     controlsDesktop:
-      'WASD move · mouse or arrow keys look · Q close eyes · E or click use · Space jump · Esc pause',
+      'WASD move · mouse or arrow keys look · Q close eyes · E or click use · Space jump · M sound · Esc pause',
     controlsTouch: 'left thumb move · right thumb look · hold the eye to close your eyes',
     closeEyes: 'Close eyes',
     eyesClosed: 'eyes closed',
@@ -77,6 +81,10 @@ const ui = {
     joystick: 'Velikost joysticku',
     subtitles: 'Titulky ke zvukům',
     volume: 'Hlasitost',
+    music: 'Hudba',
+    mute: 'Vypnout zvuk',
+    installIos:
+      'Nejlíp se hraje jako aplikace: klepni na Sdílet a pak „Přidat na plochu“. Odtud se otevře přes celou obrazovku.',
     language: 'Jazyk',
     theme: 'Motiv rozhraní',
     light: 'světlý',
@@ -88,7 +96,7 @@ const ui = {
     jump: 'Skok',
     pause: 'Pauza',
     controlsDesktop:
-      'WASD pohyb · myš nebo šipky rozhlížení · Q zavřít oči · E nebo klik použít · mezerník skok · Esc pauza',
+      'WASD pohyb · myš nebo šipky rozhlížení · Q zavřít oči · E nebo klik použít · mezerník skok · M zvuk · Esc pauza',
     controlsTouch: 'levý palec pohyb · pravý palec rozhlížení · podrž oko a zavřeš oči',
     closeEyes: 'Zavřít oči',
     eyesClosed: 'oči zavřené',

@@ -18,6 +18,8 @@ export type CueName =
   | 'respawn'
   | 'eyesClose'
   | 'eyesOpen'
+  | 'step'
+  | 'land'
 
 export type SubKey = 'ghost' | 'door' | 'solve' | 'secret' | 'gravity' | 'respawn' | 'plate'
 
@@ -65,6 +67,9 @@ export function cueFor(e: GameEvent): Cue | null {
       return null
     case 'eyes':
       return { cue: e.closed ? 'eyesClose' : 'eyesOpen' }
+    case 'step':
+    case 'land':
+      return { cue: e.name }
     case 'flag':
     case 'align':
     case 'area':
@@ -83,6 +88,8 @@ export const COOLDOWN: Partial<Record<CueName, number>> = {
   drop: 60,
   blocked: 250,
   teleport: 300,
+  step: 150,
+  land: 200,
 }
 export const DEFAULT_COOLDOWN = 40
 /** Subtitles repeat far less often than sounds, so flickering ghosts don't spam the HUD. */

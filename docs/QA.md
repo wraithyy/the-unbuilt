@@ -35,7 +35,7 @@ Reproduce: `pnpm dev`, then `node scripts/perf.mjs http://localhost:5173/?debug`
   beyond Chromium mobile emulation. Use the checklist below.
 - Real fps on mobile GPUs. Adaptive DPR and the Low preset (no shadows, DPR 1) are the
   mitigations; numbers above are draw-call/triangle counts only.
-- Audio was never listened to; levels are untuned.
+- Audio was never listened to by a human. Measured in headless Chromium (2026-10-13): score RMS about -28 dBFS, peaks about -14 dBFS, no clipping; closed eyes drop RMS from 0.05 to 0.03; mute reaches silence.
 - Full human playthrough timing (target 15–25 min) — not measured.
 
 ## Manual checklist — iOS Safari / Android Chrome

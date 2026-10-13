@@ -9,6 +9,7 @@ import {
   SUBTITLE_COOLDOWN,
   SUBTITLES,
 } from './cues'
+import { createMusic } from './music'
 
 // Everything is synthesized; no assets. Failures are swallowed so the game and
 // subtitles keep working without sound.
@@ -18,11 +19,15 @@ interface WebkitWindow {
 }
 
 let ctx: AudioContext | null = null
+/** Sound effects bus. */
 let master: GainNode | null = null
+/** Overall volume, after effects, music and the shared reverb. */
+let out: GainNode | null = null
+let musicGain: GainNode | null = null
+let muffle: BiquadFilterNode | null = null
+let music: ReturnType<typeof createMusic> | null = null
 let started = false
-let drone: { gain: GainNode; stop: () => void } | null = null
 let areaId = ''
-let pendingArea = ''
 const gate = createThrottle()
 const subtitledGhosts = new Set<string>()
 
@@ -137,72 +142,57 @@ const CUES: Record<CueName, (t: number) => void> = {
   },
   respawn: (t) => tone(440, t, 1.1, 0.05, { to: 110, attack: 0.05 }),
   eyesClose: (t) => noise(t, 0.35, 0.04, 260, 'lowpass', 0.08),
+  // Soft paper-and-concrete footfall; the random pitch keeps steps from sounding looped.
+  step: (t) => {
+    noise(t, 0.07, 0.022, 700 + Math.random() * 500, 'bandpass', 0.004)
+    tone(70 + Math.random() * 12, t, 0.09, 0.03, { to: 45, attack: 0.004 })
+  },
+  land: (t) => {
+    noise(t, 0.18, 0.06, 500, 'lowpass', 0.003)
+    tone(60, t, 0.25, 0.09, { to: 35, attack: 0.004 })
+  },
   eyesOpen: (t) => noise(t, 0.25, 0.03, 900, 'lowpass', 0.04),
 }
 
-// Drone: [freqs, gain]. Arrival is near-silent, unknown areas are silent.
-const DRONES: Record<string, [number[], number]> = {
-  arrival: [[55], 0.004],
-  atrium: [[65.4, 98], 0.018],
-  loop: [[73.4, 110.2], 0.018],
-  perspective: [[82.4, 123.5], 0.018],
-  inversion: [[61.7, 92.5, 185], 0.018],
-  convergence: [[55, 82.4, 110], 0.02],
-  ending: [[130.8, 196], 0.012],
+/** Generated room: decaying stereo noise, long enough for the pads to bloom. */
+function impulse(c: AudioContext, seconds: number) {
+  const len = Math.floor(c.sampleRate * seconds)
+  const buf = c.createBuffer(2, len, c.sampleRate)
+  for (let ch = 0; ch < 2; ch++) {
+    const d = buf.getChannelData(ch)
+    for (let i = 0; i < len; i++) d[i] = (Math.random() * 2 - 1) * (1 - i / len) ** 3
+  }
+  return buf
 }
 
-function setDrone(id: string) {
-  if (!ctx || !master || id === areaId) return
-  areaId = id
-  const t = ctx.currentTime
-  const old = drone
-  drone = null
-  if (old) {
-    old.gain.gain.cancelScheduledValues(t)
-    old.gain.gain.setValueAtTime(old.gain.gain.value, t)
-    old.gain.gain.linearRampToValueAtTime(0, t + 2)
-    setTimeout(old.stop, 2200)
-  }
-  const spec = DRONES[id]
-  if (!spec) return
-  const g = ctx.createGain()
-  g.gain.setValueAtTime(0, t)
-  g.gain.linearRampToValueAtTime(spec[1], t + 2)
-  g.connect(master)
-  const oscs = spec[0].map((f, i) => {
-    const o = ctx!.createOscillator()
-    o.type = 'sine'
-    o.frequency.value = f
-    o.detune.value = i * 4
-    o.connect(g)
-    o.start(t)
-    return o
-  })
-  drone = {
-    gain: g,
-    stop: () => {
-      for (const o of oscs) {
-        o.stop()
-        o.disconnect()
-      }
-      g.disconnect()
-    },
-  }
+/** Menu and ending have their own score; in play the area decides. */
+function themeFor(screen: string) {
+  if (screen === 'menu') return 'atrium'
+  if (screen === 'ending') return 'ending'
+  return areaId
 }
 
 function sync() {
-  if (!ctx || !master) return
-  const { screen, settings } = useUi.getState()
-  master.gain.setTargetAtTime(Math.max(0, Math.min(1, settings.volume)), ctx.currentTime, 0.05)
-  const active = screen === 'playing' && !document.hidden
+  if (!ctx || !out || !musicGain || !muffle) return
+  const { screen, settings, overlay, settingsOpen, eyesClosed } = useUi.getState()
+  const t = ctx.currentTime
+  out.gain.setTargetAtTime(settings.muted ? 0 : Math.max(0, Math.min(1, settings.volume)), t, 0.05)
+  // Menus duck the score instead of stopping it, so it never restarts from silence.
+  const blind = eyesClosed && screen === 'playing'
+  const duck = screen === 'paused' || overlay || settingsOpen ? 0.35 : blind ? 0.7 : 1
+  musicGain.gain.setTargetAtTime(Math.max(0, Math.min(1, settings.music)) * duck, t, 0.3)
+  // Closed eyes hear the world through a wall.
+  muffle.frequency.setTargetAtTime(blind ? 420 : 18000, t, 0.12)
+  music?.setTheme(themeFor(screen))
+  const active = !document.hidden
   if (active && ctx.state !== 'running') void ctx.resume().catch(() => {})
   else if (!active && ctx.state === 'running') void ctx.suspend().catch(() => {})
 }
 
 function handle(e: Parameters<typeof cueFor>[0]) {
   if (e.name === 'area') {
-    pendingArea = e.id
-    setDrone(e.id)
+    areaId = e.id
+    sync()
     return
   }
   const c = cueFor(e)
@@ -235,25 +225,45 @@ export function initAudio() {
   try {
     const Ctor = window.AudioContext ?? (window as unknown as WebkitWindow).webkitAudioContext
     if (!Ctor) return
-    ctx = new Ctor()
-    master = ctx.createGain()
-    master.gain.value = useUi.getState().settings.volume
-    // Cheap feedback delay as a small room.
-    const dly = ctx.createDelay(0.5)
-    dly.delayTime.value = 0.23
-    const fb = ctx.createGain()
-    fb.gain.value = 0.3
-    const wet = ctx.createGain()
-    wet.gain.value = 0.25
-    master.connect(dly)
-    dly.connect(fb).connect(dly)
-    dly.connect(wet).connect(ctx.destination)
-    master.connect(ctx.destination)
+    const c = new Ctor()
+    ctx = c
+    out = c.createGain()
+    out.gain.value = useUi.getState().settings.volume
+    // Safety net: stacked pads, bells and effects never clip on small speakers.
+    const limiter = c.createDynamicsCompressor()
+    limiter.threshold.value = -10
+    limiter.ratio.value = 12
+    limiter.attack.value = 0.003
+    limiter.release.value = 0.25
+    out.connect(limiter).connect(c.destination)
+    const reverb = c.createConvolver()
+    reverb.buffer = impulse(c, 3.5)
+    reverb.connect(out)
+    const send = (from: AudioNode, amount: number) => {
+      const g = c.createGain()
+      g.gain.value = amount
+      from.connect(g).connect(reverb)
+    }
+    master = c.createGain()
+    // Cue envelopes were tuned quiet; the bus brings them level with the score.
+    master.gain.value = 2.5
+    master.connect(out)
+    send(master, 0.3)
+    musicGain = c.createGain()
+    musicGain.gain.value = 0
+    muffle = c.createBiquadFilter()
+    muffle.type = 'lowpass'
+    muffle.frequency.value = 18000
+    musicGain.connect(muffle)
+    const dry = c.createGain()
+    dry.gain.value = 0.55
+    muffle.connect(dry).connect(out)
+    send(muffle, 0.9)
+    music = createMusic(c, musicGain)
     useUi.subscribe(sync)
     document.addEventListener('visibilitychange', sync)
-    void ctx.resume().catch(() => {})
+    void c.resume().catch(() => {})
     sync()
-    if (pendingArea) setDrone(pendingArea)
   } catch {
     ctx = null
     master = null

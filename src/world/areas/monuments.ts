@@ -45,6 +45,14 @@ const FIG: Record<Section, { en: string; cs: string }> = {
   contact: { en: 'fig. v — contact', cs: 'obr. v — kontakt' },
 }
 
+/** Line shown where an area is solved, pointing at the monument the solve raised. */
+export function raisedLine(section: Section) {
+  return {
+    en: `${FIG[section].en} · now standing in the Atrium`,
+    cs: `${FIG[section].cs} · teď stojí v hale`,
+  }
+}
+
 const MAX_LINES = 6
 
 export function monument(

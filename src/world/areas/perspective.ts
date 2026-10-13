@@ -1,6 +1,7 @@
 import { portfolio } from '../../portfolio/data'
 import { b, box } from '../build'
 import type { AreaDef, BoxDef, Vec3 } from '../types'
+import { raisedLine } from './monuments'
 
 // Area 3 — The Perspective. Teaches scale (E + P) and alignment (O).
 //
@@ -193,6 +194,24 @@ export const perspective: AreaDef = {
       rotY: -Math.PI / 2,
       size: 0.12,
     },
+    // Over the plinth on the far platform, once reached.
+    {
+      type: 'caption',
+      id: 'lesson',
+      text: 'perspective.lesson',
+      pos: [23, 4.4, -65.97],
+      size: 0.24,
+      style: 'display',
+      when: 'sigil:perspective',
+    },
+    {
+      type: 'caption',
+      id: 'raised',
+      text: 'perspective.raised',
+      pos: [23, 3.75, -65.97],
+      size: 0.12,
+      when: 'sigil:perspective',
+    },
     ...[0, 1, 2].map((i): AreaDef['entities'][number] => ({
       type: 'caption',
       id: `stack${i}`,
@@ -234,6 +253,8 @@ export const perspective: AreaDef = {
   hints: ['perspective.h1', 'perspective.h2', 'perspective.h3'],
   strings: {
     en: {
+      'perspective.lesson': 'The bridge was always there. You just had to stand right.',
+      'perspective.raised': raisedLine('stack').en,
       'perspective.fig1': 'fig. 01 — size is only distance',
       'perspective.fig2': 'fig. 02 — from here',
       'perspective.fig3': 'fig. 03 — small enough',
@@ -246,6 +267,8 @@ export const perspective: AreaDef = {
       'perspective.h3': 'Stand on the red square at the chasm and look down the gap.',
     },
     cs: {
+      'perspective.lesson': 'Most tu byl celou dobu. Stačilo stát na správném místě.',
+      'perspective.raised': raisedLine('stack').cs,
       'perspective.fig1': 'obr. 01 — velikost je jen vzdálenost',
       'perspective.fig2': 'obr. 02 — odsud',
       'perspective.fig3': 'obr. 03 — dost malé',

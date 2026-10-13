@@ -60,6 +60,17 @@ export function SettingsPanel() {
               onChange={(e) => update({ volume: Number(e.target.value) })}
             />
           </label>
+          <label>
+            <span>{t('music', lang)}</span>
+            <input
+              type="range"
+              min={0}
+              max={1}
+              step={0.05}
+              value={s.music}
+              onChange={(e) => update({ music: Number(e.target.value) })}
+            />
+          </label>
           <label className="check">
             <input
               type="checkbox"

@@ -2,6 +2,7 @@ import { useUi } from '../../app/store'
 import { input } from '../../engine/input/state'
 import { t } from '../../i18n'
 import { TouchControls } from '../controls/TouchControls'
+import { MuteButton } from '../MuteButton'
 import { Subtitles } from './Subtitles'
 import './hud.css'
 
@@ -43,6 +44,7 @@ export function Hud() {
           <span className="sr-only">{`${progress} / 3 ${t('progress', lang)}`}</span>
         </span>
         <div className="hud-actions">
+          <MuteButton />
           <button
             type="button"
             className="btn-ghost"

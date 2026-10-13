@@ -1,6 +1,7 @@
 import { portfolio } from '../../portfolio/data'
 import { b, box } from '../build'
 import type { AreaDef, BoxDef, CaptionDef } from '../types'
+import { raisedLine } from './monuments'
 
 // Area 4 — The Inversion. Challenges the assumption that "down" is a fact.
 //
@@ -140,6 +141,26 @@ export const inversion: AreaDef = {
       when: { not: 'sigil:inversion' },
     },
     { type: 'caption', id: 'c-title', text: 'inversion.fig1', pos: [0, 5.2, -79.97], size: 0.14 },
+    // The chamber is read upside-down, so its lines are rolled and stacked toward the roof.
+    {
+      type: 'caption',
+      id: 'lesson',
+      text: 'inversion.lesson',
+      pos: [0, 7.45, -91.97],
+      roll: Math.PI,
+      size: 0.2,
+      style: 'display',
+      when: 'sigil:inversion',
+    },
+    {
+      type: 'caption',
+      id: 'raised',
+      text: 'inversion.raised',
+      pos: [0, 7.85, -91.97],
+      roll: Math.PI,
+      size: 0.1,
+      when: 'sigil:inversion',
+    },
     {
       type: 'caption',
       id: 'c-wall',
@@ -214,6 +235,8 @@ export const inversion: AreaDef = {
   hints: ['inversion.h1', 'inversion.h2', 'inversion.h3'],
   strings: {
     en: {
+      'inversion.lesson': 'Down is wherever you decide.',
+      'inversion.raised': raisedLine('experience').en,
       'inversion.fig1': 'fig. 04 — every surface is a floor to someone',
       'inversion.fig2': 'fig. 04.1 — red surfaces pull',
       'inversion.histTitle': portfolio.en.historyTitle,
@@ -225,6 +248,8 @@ export const inversion: AreaDef = {
         'The ceiling doorway lets you through only while nobody watches it. Close your eyes and walk in.',
     },
     cs: {
+      'inversion.lesson': 'Dole je tam, kde se rozhodneš.',
+      'inversion.raised': raisedLine('experience').cs,
       'inversion.fig1': 'obr. 04 — každý povrch je pro někoho podlaha',
       'inversion.fig2': 'obr. 04.1 — červené plochy přitahují',
       'inversion.histTitle': portfolio.cs.historyTitle,

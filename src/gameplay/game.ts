@@ -34,6 +34,9 @@ import { clearTransient, createFlags, evalCond, type Flags, setFlag } from './pr
 // The simulation. Everything per-frame lives here as plain mutable objects (no React).
 // Mutation is deliberate: the sim runs at 60 Hz and must not allocate.
 
+/** Meters walked per footstep sound (about 2.5 steps per second at walking speed). */
+const STRIDE = 1.7
+
 export type GameEvent =
   | { name: 'ghost'; id: string; present: boolean }
   | { name: 'teleport' }
@@ -48,6 +51,7 @@ export type GameEvent =
   | { name: 'area'; id: string }
   | { name: 'ending' }
   | { name: 'eyes'; closed: boolean }
+  | { name: 'step' | 'land' }
   | { name: 'custom'; id: string }
 
 export interface StaticBox {
@@ -188,6 +192,8 @@ export class Game {
   /** With eyes closed nothing is observed: the world shows its unwatched state. */
   eyesClosed = false
   time = 0
+  /** Ground distance walked since the last footstep. */
+  private stride = 0
   private lostFor = 0
   private listeners: ((e: GameEvent) => void)[] = []
 
@@ -337,7 +343,9 @@ export class Game {
     this.refreshActive()
     this.rebuildSolids(null)
 
+    const airBefore = this.player.grounded ? 0 : this.player.airTime
     stepPlayer(this.player, move, dt, this.solids)
+    this.stepFootfall(dt, airBefore)
     this.updatePlayerBox()
     this.updateFrustum(camera)
 
@@ -350,6 +358,22 @@ export class Game {
     this.stepAnamorphs(dt)
     this.stepHeld(move.interact)
     this.stepArea(dt)
+  }
+
+  private stepFootfall(dt: number, airBefore: number) {
+    const p = this.player
+    if (!p.grounded) return
+    // Stairs and step-downs leave the ground for a few frames; only real falls land.
+    if (airBefore > 0.25) {
+      this.stride = 0
+      this.emit({ name: 'land' })
+      return
+    }
+    this.stride += p.vel.length() * dt
+    if (this.stride >= STRIDE) {
+      this.stride -= STRIDE
+      this.emit({ name: 'step' })
+    }
   }
 
   updatePlayerBox() {

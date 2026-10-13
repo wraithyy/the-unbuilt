@@ -1,16 +1,19 @@
 import { portfolio } from '../../portfolio/data'
 import { b, box, frame } from '../build'
 import type { AreaDef, BoxDef, Cond, EntityDef, TriggerDef, Vec3 } from '../types'
+import { raisedLine } from './monuments'
 
 // Area 2 — The Loop. A slalom corridor of identical 10 m bays. Walking west through the far
 // end teleports you 10 m back east (seamless: the corridor is periodic), and every such
 // lap flips a parity flag `loop:odd`.
 //
-// Rule (learnable by walking two laps):
-//   * Ink vault doors in the south wall are open only on ODD passes. One vault (bay 1)
-//     holds the cube.
+// Rule (learnable by walking two laps), each with a tell in the world:
+//   * Glass vault doors in the south wall are open only on ODD passes. One vault (bay 1)
+//     holds the cube, visible through the glass before it opens.
+//   * After the first lap every bay's wall caption alternates between two lines, so the
+//     repeat and its parity are readable.
 //   * The plate niche in the north wall is hidden by a ghost wall that exists only while
-//     watched. The plate lives in bay 1, just before the far-end jump.
+//     watched. Its red frame is the Arrival's painted-door motif: close your eyes.
 //   * A cube resting on the plate sets `loop:anchor`: the far-end jump stops firing and the
 //     ink door at the end of the corridor opens.
 // Solution: walk one lap (parity becomes odd, vaults open), take the cube from the vault,
@@ -33,7 +36,12 @@ const BAYS = 4
 const U_END = 51.8
 const MOUTH = 1.8
 const ODD = 'loop:odd'
+// The fixed point: a room past the end door, reached only once the corridor is anchored.
+const ROOM_U = 45.4
+const ROOM_Z: [number, number] = [-35.6, -28.4]
 const ANCHOR = 'loop:anchor'
+const LAPPED = 'loop:lapped'
+const notOdd: Cond = { not: ODD }
 
 const ub = (u0: number, u1: number, z0: number, z1: number, y0: number, y1: number, mat?: 'ink') =>
   b([x(u1), y0, z0], [x(u0), y1, z1], mat)
@@ -66,14 +74,14 @@ function cavity(side: 'n' | 's', u0: number): BoxDef[] {
 }
 
 /** A wall of the corridor with mouths cut out. */
-function wall(z0: number, z1: number, mouths: number[]): BoxDef[] {
+function wall(z0: number, z1: number, mouths: number[], end = ROOM_U): BoxDef[] {
   const out: BoxDef[] = []
   let cur = 0
   for (const m of mouths) {
     out.push(ub(cur, m, z0, z1, 0, 3))
     cur = m + MOUTH
   }
-  out.push(ub(cur, U_END, z0, z1, 0, 3))
+  out.push(ub(cur, end, z0, z1, 0, 3))
   return out
 }
 
@@ -83,9 +91,29 @@ const niches = Array.from({ length: BAYS }, (_, k) => nicheU(k))
 const corridor: BoxDef[] = [
   ub(0, U_END, -33.6, -30.4, -0.4, 0),
   ub(0, U_END, -33.6, -30.4, 3, 3.4),
-  ub(51.4, U_END, -33.6, -30.4, 0, 3),
   ...wall(-33.6, -33.2, niches),
   ...wall(-30.8, -30.4, vaults),
+]
+
+const [RZ0, RZ1] = ROOM_Z
+const room: BoxDef[] = [
+  ub(ROOM_U, U_END, RZ0 - 0.4, RZ1 + 0.4, -0.4, 0),
+  ub(ROOM_U, U_END, RZ0 - 0.4, RZ1 + 0.4, 3, 3.4),
+  ub(ROOM_U, U_END, RZ0 - 0.4, RZ0, 0, 3),
+  ub(ROOM_U, U_END, RZ1, RZ1 + 0.4, 0, 3),
+  ub(51.4, U_END, RZ0, RZ1, 0, 3),
+  ub(ROOM_U, ROOM_U + 0.4, RZ0, -33.2, 0, 3),
+  ub(ROOM_U, ROOM_U + 0.4, -30.8, RZ1, 0, 3),
+]
+
+// Drawn on the floor once solved: the fixed point you are standing on.
+const mark = (u0: number, u1: number, z0: number, z1: number) =>
+  b([x(u1), 0, z0], [x(u0), 0.02, z1], 'accent', 'sigil:loop')
+const fixedPoint: BoxDef[] = [
+  mark(47.4, 49.8, -33.2, -33.05),
+  mark(47.4, 49.8, -30.95, -30.8),
+  mark(47.4, 47.55, -33.2, -30.8),
+  mark(49.65, 49.8, -33.2, -30.8),
 ]
 
 // Staggered baffles: they break sightlines so the seam of the loop is never visible, and
@@ -97,8 +125,17 @@ for (let k = 0; k < BAYS; k++) {
   baffles.push(ub(u, u + 0.4, -33.2, -32, 0, 3), ub(u + 5, u + 5.4, -32, -30.8, 0, 3))
   baffles.push(...cavity('s', vaultU(k)), ...cavity('n', nicheU(k)))
   mouths.push(
-    ...frame('s', -30.8, x(vaultU(k) + MOUTH / 2), MOUTH, 3),
-    ...frame('n', -33.2, x(nicheU(k) + MOUTH / 2), MOUTH, 3),
+    ...frame('s', -30.8, x(vaultU(k) + MOUTH / 2), MOUTH, 3, 0, 'ink'),
+    // Red marks the one anomaly worth closing your eyes for: the niche with the plate.
+    ...frame(
+      'n',
+      -33.2,
+      x(nicheU(k) + MOUTH / 2),
+      MOUTH,
+      3,
+      0,
+      k === CUBE_BAY ? 'accent' : 'surface',
+    ),
   )
 }
 
@@ -135,7 +172,7 @@ for (let k = 0; k < BAYS; k++) {
       id: `vault${k}`,
       box: ub(v, v + MOUTH, -30.8, -30.4, 0, 3, 'ink'),
       openWhen: ODD,
-      mat: 'ink',
+      mat: 'glass',
     },
     {
       type: 'ghost',
@@ -167,11 +204,53 @@ entities.push(
     type: 'caption',
     id: 'fig2',
     text: 'loop.fig2',
-    pos: [x(51.37), 1.7, -32],
+    pos: [x(51.37), 2.75, -32],
     rotY: Math.PI / 2,
     size: 0.14,
   },
+  {
+    type: 'caption',
+    id: 'lesson',
+    text: 'loop.lesson',
+    pos: [x(51.37), 2.05, -32],
+    rotY: Math.PI / 2,
+    size: 0.3,
+    style: 'display',
+    when: 'sigil:loop',
+  },
+  {
+    type: 'caption',
+    id: 'raised',
+    text: 'loop.raised',
+    pos: [x(51.37), 1.5, -32],
+    rotY: Math.PI / 2,
+    size: 0.13,
+    when: 'sigil:loop',
+  },
 )
+
+// Lap captions: identical in every bay so the seam stays invisible; they swap on each lap.
+for (let k = 0; k < BAYS; k++) {
+  const pos: Vec3 = [x(bayU(k) + 3.2), 1.7, -33.17]
+  entities.push(
+    {
+      type: 'caption',
+      id: `here${k}`,
+      text: 'loop.here',
+      pos,
+      size: 0.14,
+      when: { all: [LAPPED, ODD] },
+    },
+    {
+      type: 'caption',
+      id: `again${k}`,
+      text: 'loop.again',
+      pos,
+      size: 0.14,
+      when: { all: [LAPPED, notOdd] },
+    },
+  )
+}
 
 // Secret captions: capability title + delivered line, N and S walls.
 const SEC_ZC = (SEC_Z[0] + SEC_Z[1]) / 2
@@ -213,7 +292,6 @@ entities.push({
 
 // ---------------------------------------------------------------- triggers
 const SPAN = (lo: number, hi: number) => box([x(hi), 0, -33.2], [x(lo), 3, -30.8])
-const notOdd: Cond = { not: ODD }
 const free: Cond = { not: ANCHOR }
 const clearBack = [
   { type: 'flag', flag: 'loop:b1', value: false },
@@ -238,6 +316,7 @@ const triggers: TriggerDef[] = [
     actions: [
       { type: 'teleport', from: [0, 0, 0], to: [PERIOD, 0, 0] },
       { type: 'flag', flag: ODD },
+      { type: 'flag', flag: LAPPED },
       ...clearBack,
     ],
   },
@@ -296,7 +375,7 @@ const triggers: TriggerDef[] = [
   },
   {
     id: 'solve',
-    box: SPAN(47, 50),
+    box: box([x(51.4), 0, RZ0], [x(47), 3, RZ1]),
     when: { not: 'sigil:loop' },
     actions: [
       { type: 'flag', flag: 'sigil:loop', persist: true },
@@ -317,7 +396,7 @@ export const loop: AreaDef = {
   id: 'loop',
   bounds: box([-120, -30, -70], [-16.4, 40, 10]),
   spawn: { pos: [-18, 0.85, -32], yaw: Math.PI / 2 },
-  boxes: [...corridor, ...baffles, ...mouths, ...secretRoom],
+  boxes: [...corridor, ...room, ...fixedPoint, ...baffles, ...mouths, ...secretRoom],
   entities,
   triggers,
   hints: ['loop.h1', 'loop.h2', 'loop.h3'],
@@ -326,20 +405,28 @@ export const loop: AreaDef = {
       'loop.fig1': 'fig. 02 — you have been here',
       'loop.fig2': 'fig. 02 — fixed point',
       'loop.sec.fig': 'fig. 07 — capabilities',
-      'loop.h1': 'Keep walking. Note what repeats, and what does not.',
-      'loop.h2': 'An ink door in the wall opens only on every other pass.',
+      'loop.lesson': 'You leave a loop by leaving something in it.',
+      'loop.raised': raisedLine('capabilities').en,
+      'loop.here': 'fig. 02 — you have been here',
+      'loop.again': 'fig. 02 — you have been here before',
+      'loop.h1': 'Keep walking past the end. Read the wall each time.',
+      'loop.h2': 'The glass doors open on every other pass. Take what is inside.',
       'loop.h3':
-        'The door gives up something you can carry round the loop. A wall that exists only while watched hides where it belongs.',
+        'The red frame is a doorway that exists only while nobody looks. Close your eyes, carry the cube in and put it on the plate.',
       ...sec('en'),
     },
     cs: {
       'loop.fig1': 'obr. 02 — už jsi tu byl',
       'loop.fig2': 'obr. 02 — pevný bod',
       'loop.sec.fig': 'obr. 07 — schopnosti',
-      'loop.h1': 'Jdi dál. Všimni si, co se opakuje a co ne.',
-      'loop.h2': 'Inkoustové dveře ve zdi se otevřou jen při každém druhém průchodu.',
+      'loop.lesson': 'Ze smyčky odejdeš, až v ní něco necháš.',
+      'loop.raised': raisedLine('capabilities').cs,
+      'loop.here': 'obr. 02 — tady už jsi byl',
+      'loop.again': 'obr. 02 — tady už jsi byl předtím',
+      'loop.h1': 'Jdi dál za konec chodby. Pokaždé si přečti zeď.',
+      'loop.h2': 'Skleněné dveře se otevřou jen při každém druhém průchodu. Vezmi, co je uvnitř.',
       'loop.h3':
-        'Dveře vydají něco, co můžeš nést dokola. Zeď, která existuje jen pod pohledem, skrývá místo, kam to patří.',
+        'Červený rám jsou dveře, které existují, jen když se nikdo nedívá. Zavři oči, odnes kostku dovnitř a polož ji na desku.',
       ...sec('cs'),
     },
   },

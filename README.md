@@ -40,6 +40,7 @@ screenshots, per-area render stats); run them from the repo root against `pnpm d
 | Close your eyes | Q (hold; toggle in settings) | hold the eye button |
 | Jump | Space | Jump button |
 | Pause | Esc | II button |
+| Sound on/off | M | speaker button |
 
 The portfolio (JK button, menus) is reachable at any time without playing.
 
@@ -47,7 +48,7 @@ The portfolio (JK button, menus) is reachable at any time without playing.
 
 ```
 src/engine/     core: AABB collision, kinematic player (6 gravity frames),
-                input (keyboard/mouse, touch), save (versioned localStorage), audio (WebAudio synth)
+                input (keyboard/mouse, touch), save (versioned localStorage), audio (WebAudio synth: generative per-area score, footsteps, reverb)
 src/gameplay/   Game simulation: observation (frustum + hysteresis), portals (seamless
                 teleports), perspective (forced-scale cubes), gravity, flags/progression
 src/world/      area data (pure AreaDef objects), authoring helpers, renderer (R3F)
