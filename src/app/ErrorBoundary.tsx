@@ -14,7 +14,7 @@ export class ErrorBoundary extends Component<{ children: ReactNode }, { failed: 
     return (
       <main className="menu">
         <div className="menu-inner">
-          <p className="label">fig. — error</p>
+          <p className="label">fig. error</p>
           <h1 className="title">Something in the architecture gave way.</h1>
           <div className="menu-actions">
             <button

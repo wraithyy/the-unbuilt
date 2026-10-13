@@ -79,7 +79,7 @@ const stairs: BoxDef[] = Array.from({ length: 10 }, (_, j) =>
   b([29 - 1.2 * (j + 1), PIT, -52], [29 - 1.2 * j, PIT + 0.4 * (j + 1), -50], 'surface'),
 )
 
-const stack = (l: 'en' | 'cs') => portfolio[l].stack.map((s) => `${s.label} — ${s.items}`)
+const stack = (l: 'en' | 'cs') => portfolio[l].stack.map((s) => `${s.label}: ${s.items}`)
 const stackEn = stack('en')
 const stackCs = stack('cs')
 
@@ -255,9 +255,9 @@ export const perspective: AreaDef = {
     en: {
       'perspective.lesson': 'The bridge was always there. You just had to stand right.',
       'perspective.raised': raisedLine('stack').en,
-      'perspective.fig1': 'fig. 01 — size is only distance',
-      'perspective.fig2': 'fig. 02 — from here',
-      'perspective.fig3': 'fig. 03 — small enough',
+      'perspective.fig1': 'fig. 01: size is only distance',
+      'perspective.fig2': 'fig. 02: from here',
+      'perspective.fig3': 'fig. 03: small enough',
       'perspective.stack0': stackEn[0],
       'perspective.stack1': stackEn[1],
       'perspective.stack2': stackEn[2],
@@ -269,9 +269,9 @@ export const perspective: AreaDef = {
     cs: {
       'perspective.lesson': 'Most tu byl celou dobu. Stačilo stát na správném místě.',
       'perspective.raised': raisedLine('stack').cs,
-      'perspective.fig1': 'obr. 01 — velikost je jen vzdálenost',
-      'perspective.fig2': 'obr. 02 — odsud',
-      'perspective.fig3': 'obr. 03 — dost malé',
+      'perspective.fig1': 'obr. 01: velikost je jen vzdálenost',
+      'perspective.fig2': 'obr. 02: odsud',
+      'perspective.fig3': 'obr. 03: dost malé',
       'perspective.stack0': stackCs[0],
       'perspective.stack1': stackCs[1],
       'perspective.stack2': stackCs[2],

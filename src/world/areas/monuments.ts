@@ -17,11 +17,11 @@ function sectionLines(lang: Lang, section: Section): { title: string; lines: str
         lines: [...p.capabilities.map((c, i) => `0${i + 1} ${c.title}`), p.capabilitiesNote],
       }
     case 'stack':
-      return { title: 'Stack', lines: p.stack.map((s) => `${s.label} — ${s.items}`) }
+      return { title: 'Stack', lines: p.stack.map((s) => `${s.label}: ${s.items}`) }
     case 'experience':
       return {
         title: p.historyTitle,
-        lines: p.history.map((h) => `${h.years} · ${h.company} — ${h.role}`),
+        lines: p.history.map((h) => `${h.years} · ${h.company} · ${h.role}`),
       }
     case 'contact':
       return {
@@ -38,11 +38,11 @@ function sectionLines(lang: Lang, section: Section): { title: string; lines: str
 }
 
 const FIG: Record<Section, { en: string; cs: string }> = {
-  about: { en: 'fig. i — about', cs: 'obr. i — o mně' },
-  capabilities: { en: 'fig. ii — capabilities', cs: 'obr. ii — co umím' },
-  stack: { en: 'fig. iii — stack', cs: 'obr. iii — stack' },
-  experience: { en: 'fig. iv — experience', cs: 'obr. iv — kde jsem pracoval' },
-  contact: { en: 'fig. v — contact', cs: 'obr. v — kontakt' },
+  about: { en: 'fig. i: about', cs: 'obr. i: o mně' },
+  capabilities: { en: 'fig. ii: capabilities', cs: 'obr. ii: co umím' },
+  stack: { en: 'fig. iii: stack', cs: 'obr. iii: stack' },
+  experience: { en: 'fig. iv: experience', cs: 'obr. iv: kde jsem pracoval' },
+  contact: { en: 'fig. v: contact', cs: 'obr. v: kontakt' },
 }
 
 /** Line shown where an area is solved, pointing at the monument the solve raised. */

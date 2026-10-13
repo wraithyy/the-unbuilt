@@ -28,7 +28,7 @@ export function MainMenu() {
   return (
     <main className="menu">
       <div className="menu-inner">
-        <p className="label">fig. 00 — {lang === 'cs' ? 'vstup' : 'entrance'}</p>
+        <p className="label">fig. 00: {lang === 'cs' ? 'vstup' : 'entrance'}</p>
         <h1 className="display">The Unbuilt</h1>
         <p className="menu-tagline">{t('tagline', lang)}</p>
         {confirm ? (

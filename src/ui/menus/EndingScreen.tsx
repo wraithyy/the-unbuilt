@@ -9,7 +9,7 @@ export function EndingScreen() {
   return (
     <main className="menu ending">
       <div className="menu-inner">
-        <p className="label">fig. ∞ — {lang === 'cs' ? 'nepostaveno' : 'unbuilt'}</p>
+        <p className="label">fig. ∞: {lang === 'cs' ? 'nepostaveno' : 'unbuilt'}</p>
         <h1 className="display">{p.name}</h1>
         <p className="menu-tagline">{p.role}</p>
         <p>{p.lede}</p>

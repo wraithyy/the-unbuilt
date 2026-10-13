@@ -103,8 +103,8 @@ export const arrival: AreaDef = {
   hints: ['arrival.h1', 'arrival.h2', 'arrival.h3'],
   strings: {
     en: {
-      'arrival.fig1': 'fig. 01 — a door, drawn',
-      'arrival.fig2': 'fig. 02 — nobody is watching',
+      'arrival.fig1': 'fig. 01: a door, drawn',
+      'arrival.fig2': 'fig. 02: nobody is watching',
       'arrival.title': 'The Unbuilt',
       'arrival.h1':
         'Something on the north wall changes. Watch the frame from the corner of your eye.',
@@ -113,8 +113,8 @@ export const arrival: AreaDef = {
         'Close your eyes (Q, or hold the eye) and walk through. In the next room, let things move while you are not looking.',
     },
     cs: {
-      'arrival.fig1': 'obr. 01 — dveře, nakreslené',
-      'arrival.fig2': 'obr. 02 — nikdo se nedívá',
+      'arrival.fig1': 'obr. 01: dveře, nakreslené',
+      'arrival.fig2': 'obr. 02: nikdo se nedívá',
       'arrival.title': 'The Unbuilt',
       'arrival.h1': 'Na severní stěně se něco mění. Sleduj rám koutkem oka.',
       'arrival.h2': 'Ze dveří je zeď, jen dokud se na ně díváš.',

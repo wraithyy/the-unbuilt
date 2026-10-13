@@ -402,13 +402,13 @@ export const loop: AreaDef = {
   hints: ['loop.h1', 'loop.h2', 'loop.h3'],
   strings: {
     en: {
-      'loop.fig1': 'fig. 02 — you have been here',
-      'loop.fig2': 'fig. 02 — fixed point',
-      'loop.sec.fig': 'fig. 07 — capabilities',
+      'loop.fig1': 'fig. 02: you have been here',
+      'loop.fig2': 'fig. 02: fixed point',
+      'loop.sec.fig': 'fig. 07: capabilities',
       'loop.lesson': 'You leave a loop by leaving something in it.',
       'loop.raised': raisedLine('capabilities').en,
-      'loop.here': 'fig. 02 — you have been here',
-      'loop.again': 'fig. 02 — you have been here before',
+      'loop.here': 'fig. 02: you have been here',
+      'loop.again': 'fig. 02: you have been here before',
       'loop.h1': 'Keep walking past the end. Read the wall each time.',
       'loop.h2': 'The glass doors open on every other pass. Take what is inside.',
       'loop.h3':
@@ -416,13 +416,13 @@ export const loop: AreaDef = {
       ...sec('en'),
     },
     cs: {
-      'loop.fig1': 'obr. 02 — už jsi tu byl',
-      'loop.fig2': 'obr. 02 — pevný bod',
-      'loop.sec.fig': 'obr. 07 — schopnosti',
+      'loop.fig1': 'obr. 02: už jsi tu byl',
+      'loop.fig2': 'obr. 02: pevný bod',
+      'loop.sec.fig': 'obr. 07: schopnosti',
       'loop.lesson': 'Ze smyčky odejdeš, až v ní něco necháš.',
       'loop.raised': raisedLine('capabilities').cs,
-      'loop.here': 'obr. 02 — tady už jsi byl',
-      'loop.again': 'obr. 02 — tady už jsi byl předtím',
+      'loop.here': 'obr. 02: tady už jsi byl',
+      'loop.again': 'obr. 02: tady už jsi byl předtím',
       'loop.h1': 'Jdi dál za konec chodby. Pokaždé si přečti zeď.',
       'loop.h2': 'Skleněné dveře se otevřou jen při každém druhém průchodu. Vezmi, co je uvnitř.',
       'loop.h3':

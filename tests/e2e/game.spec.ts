@@ -91,7 +91,7 @@ test.describe('desktop', () => {
       g.warp([0, 0.85, -14.6], 0)
       g.player.pitch = Math.atan2(15.5 - 1.47, -14.6 + 31)
     })
-    await page.getByRole('button', { name: /Portfolio — about/ }).click()
+    await page.getByRole('button', { name: /Portfolio: about/ }).click()
     const dialog = page.getByRole('dialog')
     await expect(dialog.getByText('found in the world')).toBeVisible()
   })

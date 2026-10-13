@@ -35,7 +35,7 @@ export function PauseMenu() {
       aria-labelledby="pause-title"
     >
       <div className="modal-card">
-        <p className="label">fig. — {t('paused', lang).toLowerCase()}</p>
+        <p className="label">fig. {t('paused', lang).toLowerCase()}</p>
         <h2 id="pause-title" className="title">
           {t('paused', lang)}
         </h2>

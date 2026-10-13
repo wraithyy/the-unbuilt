@@ -130,7 +130,7 @@ export function Hud() {
               set({ overlay: true, overlaySection: discovery, discovery: null })
             }}
           >
-            {t('portfolio', lang)} — {discovery} ↗
+            {t('portfolio', lang)}: {discovery} ↗
           </button>
         </div>
       )}

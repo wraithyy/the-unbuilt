@@ -99,7 +99,7 @@ const history = (lang: 'en' | 'cs') =>
   Object.fromEntries(
     portfolio[lang].history.map((j, i) => [
       `inversion.hist${i}`,
-      `${j.years} · ${j.company} — ${j.role}`,
+      `${j.years} · ${j.company} · ${j.role}`,
     ]),
   )
 
@@ -237,8 +237,8 @@ export const inversion: AreaDef = {
     en: {
       'inversion.lesson': 'Down is wherever you decide.',
       'inversion.raised': raisedLine('experience').en,
-      'inversion.fig1': 'fig. 04 — every surface is a floor to someone',
-      'inversion.fig2': 'fig. 04.1 — red surfaces pull',
+      'inversion.fig1': 'fig. 04: every surface is a floor to someone',
+      'inversion.fig2': 'fig. 04.1: red surfaces pull',
       'inversion.histTitle': portfolio.en.historyTitle,
       ...history('en'),
       'inversion.h1': 'Red surfaces want to be the floor. Walk into one.',
@@ -250,8 +250,8 @@ export const inversion: AreaDef = {
     cs: {
       'inversion.lesson': 'Dole je tam, kde se rozhodneš.',
       'inversion.raised': raisedLine('experience').cs,
-      'inversion.fig1': 'obr. 04 — každý povrch je pro někoho podlaha',
-      'inversion.fig2': 'obr. 04.1 — červené plochy přitahují',
+      'inversion.fig1': 'obr. 04: každý povrch je pro někoho podlaha',
+      'inversion.fig2': 'obr. 04.1: červené plochy přitahují',
       'inversion.histTitle': portfolio.cs.historyTitle,
       ...history('cs'),
       'inversion.h1': 'Červené plochy chtějí být podlahou. Vejdi do jedné.',

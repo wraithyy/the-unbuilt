@@ -43,7 +43,7 @@ function Section({ n, title, children }: { n: number; title: string; children: R
   return (
     <section id={`ov-${IDS[n]}`} className="ov-sec" aria-labelledby={`ov-h-${IDS[n]}`}>
       <p className="label" id={`ov-h-${IDS[n]}`}>
-        {String(n + 1).padStart(2, '0')} — {title}
+        {String(n + 1).padStart(2, '0')}: {title}
         {found && (
           <span className="ov-found">
             {' · '}
@@ -155,7 +155,7 @@ export function Overlay() {
                 <li key={c.title}>
                   <h3 className="ov-h3">{c.title}</h3>
                   <p>
-                    <span className="label">delivered — </span>
+                    <span className="label">delivered: </span>
                     {c.delivered}
                   </p>
                 </li>

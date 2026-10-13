@@ -102,7 +102,7 @@ Actions:
 ## Strings and hints
 
 `strings: { en, cs }` hold every caption/hint text of your area. Keys are namespaced
-(`loop.fig1`). Captions use the site's figure style: EN `fig. 02 — …`, CS `obr. 02 — …`.
+(`loop.fig1`). Captions use the site's figure style: EN `fig. 02: …`, CS `obr. 02: …`.
 Keep words scarce — discovery over explanation. `hints` are 2–3 keys, from gentle nudge
 to near-solution, shown on demand from the pause menu.
 

@@ -158,22 +158,22 @@ export const convergence: AreaDef = {
   hints: ['conv.h1', 'conv.h2', 'conv.h3'],
   strings: {
     en: {
-      'conv.fig1': 'fig. 05 — larger on the inside',
-      'conv.fig2': 'fig. 06 — small things, far away',
-      'conv.fig3': 'fig. 07 — falls the other way',
+      'conv.fig1': 'fig. 05: larger on the inside',
+      'conv.fig2': 'fig. 06: small things, far away',
+      'conv.fig3': 'fig. 07: falls the other way',
       'conv.h1': 'The stair is there whenever you are not looking at it.',
       'conv.h2': 'The plate wants something large. Things you hold keep their apparent size.',
       'conv.h3':
-        'In the tower, fall up. The opening above is only sealed while someone watches it — close your eyes.',
+        'In the tower, fall up. The opening above is only sealed while someone watches it. Close your eyes.',
     },
     cs: {
-      'conv.fig1': 'obr. 05 — uvnitř větší',
-      'conv.fig2': 'obr. 06 — malé věci, daleko',
-      'conv.fig3': 'obr. 07 — padá to jinam',
+      'conv.fig1': 'obr. 05: uvnitř větší',
+      'conv.fig2': 'obr. 06: malé věci, daleko',
+      'conv.fig3': 'obr. 07: padá to jinam',
       'conv.h1': 'Schodiště tam je vždycky, když se na něj nedíváš.',
       'conv.h2': 'Deska chce něco velkého. Co držíš, si drží zdánlivou velikost.',
       'conv.h3':
-        'Ve věži padej vzhůru. Otvor nahoře je zavřený, jen když se na něj někdo dívá — zavři oči.',
+        'Ve věži padej vzhůru. Otvor nahoře je zavřený, jen když se na něj někdo dívá. Zavři oči.',
     },
   },
 }

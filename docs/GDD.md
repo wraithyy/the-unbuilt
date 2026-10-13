@@ -2,7 +2,7 @@
 
 Antichamber-first: the player learns the world's rules by touching them. One accent
 colour (the site's red) marks everything interactive or anomalous; paper-white brutalist
-volumes with ink hairlines borrow the jkvapil.cz "fig. NN — wireframe, no fill" motif.
+volumes with ink hairlines borrow the jkvapil.cz "fig. NN: wireframe, no fill" motif.
 
 ## Core loop
 
