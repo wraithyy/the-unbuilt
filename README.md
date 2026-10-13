@@ -9,7 +9,7 @@ unwatched blueprint; a corridor repeats itself, what you hold keeps its apparent
 any red surface can become the floor. The architecture is only built where you look; the
 portfolio is written in anamorphic shards that read from a single point.
 
-Play: https://unbuilt.jkvapil.cz
+Play: https://unbuilt.jkvapil.cz (Cloudflare Pages, deployed on push to main)
 
 Installable as an app (PWA): on Android Chrome use "Install app", on iOS Safari Share → "Add to Home Screen". It launches full-screen and plays offline after the first load.
 

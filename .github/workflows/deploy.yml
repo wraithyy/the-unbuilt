@@ -1,0 +1,43 @@
+# Deploy to Cloudflare Pages (project "the-unbuilt", custom domain unbuilt.jkvapil.cz).
+#
+# Repository secrets:
+#   CLOUDFLARE_API_TOKEN  — token with Cloudflare Pages: Edit
+#   CLOUDFLARE_ACCOUNT_ID — account that owns the project
+#
+# push to main → production; any other branch → a preview URL.
+name: deploy
+
+on:
+  push:
+    branches: ['**']
+  workflow_dispatch:
+
+concurrency:
+  group: deploy-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      deployments: write
+    steps:
+      - uses: actions/checkout@v4
+      - uses: pnpm/action-setup@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version-file: .node-version
+          cache: pnpm
+      - run: pnpm install --frozen-lockfile
+      - run: pnpm lint
+      - run: pnpm test
+      - run: pnpm build
+      - name: Deploy to Cloudflare Pages
+        id: deploy
+        uses: cloudflare/wrangler-action@v3
+        with:
+          apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          accountId: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+          command: pages deploy dist --project-name=the-unbuilt --branch=${{ github.ref_name }}
+      - run: echo "### Deployed → ${{ steps.deploy.outputs.deployment-url }}" >> "$GITHUB_STEP_SUMMARY"
